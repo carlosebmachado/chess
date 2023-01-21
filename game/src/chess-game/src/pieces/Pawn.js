@@ -10,8 +10,6 @@ class Pawn extends Piece {
 
   update(delta) {
     super.update(delta);
-    // console.log("pawn update");
-
     if (!this.currentSquare) return;
 
     if (this.playable) {

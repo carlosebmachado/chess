@@ -121,14 +121,14 @@ class Board {
     var player = color;
     var opponent = color == Piece.WHITE ? Piece.BLACK : Piece.WHITE;
 
-    // this.squares[0][0].piece = new Rook(this, player, this.squareSize, true);
-    // this.squares[0][1].piece = new Knight(this, player, this.squareSize, true);
-    // this.squares[0][2].piece = new Bishop(this, player, this.squareSize, true);
-    // this.squares[0][3].piece = new Queen(this, player, this.squareSize, true);
-    // this.squares[0][4].piece = new King(this, player, this.squareSize, true);
-    // this.squares[0][5].piece = new Bishop(this, player, this.squareSize, true);
-    // this.squares[0][6].piece = new Knight(this, player, this.squareSize, true);
-    // this.squares[0][7].piece = new Rook(this, player, this.squareSize, true);
+    this.squares[7][0].piece = new Rook(this, player, this.squareSize, true);
+    // this.squares[7][1].piece = new Knight(this, player, this.squareSize, true);
+    // this.squares[7][2].piece = new Bishop(this, player, this.squareSize, true);
+    // this.squares[7][3].piece = new Queen(this, player, this.squareSize, true);
+    // this.squares[7][4].piece = new King(this, player, this.squareSize, true);
+    // this.squares[7][5].piece = new Bishop(this, player, this.squareSize, true);
+    // this.squares[7][6].piece = new Knight(this, player, this.squareSize, true);
+    this.squares[7][7].piece = new Rook(this, player, this.squareSize, true);
 
     this.squares[6][0].piece = new Pawn(this, player, this.squareSize, true);
     this.squares[6][1].piece = new Pawn(this, player, this.squareSize, true);
@@ -148,14 +148,14 @@ class Board {
     this.squares[1][6].piece = new Pawn(this, opponent, this.squareSize, false);
     this.squares[1][7].piece = new Pawn(this, opponent, this.squareSize, false);
 
-    // this.squares[7][0].piece = new Rook(this, opponent, this.squareSize, false);
-    // this.squares[7][1].piece = new Knight(this, opponent, this.squareSize, false);
-    // this.squares[7][2].piece = new Bishop(this, opponent, this.squareSize, false);
-    // this.squares[7][3].piece = new Queen(this, opponent, this.squareSize, false);
-    // this.squares[7][4].piece = new King(this, opponent, this.squareSize, false);
-    // this.squares[7][5].piece = new Bishop(this, opponent, this.squareSize, false);
-    // this.squares[7][6].piece = new Knight(this, opponent, this.squareSize, false);
-    // this.squares[7][7].piece = new Rook(this, opponent, this.squareSize, false);
+    this.squares[0][0].piece = new Rook(this, opponent, this.squareSize, false);
+    // this.squares[0][1].piece = new Knight(this, opponent, this.squareSize, false);
+    // this.squares[0][2].piece = new Bishop(this, opponent, this.squareSize, false);
+    // this.squares[0][3].piece = new Queen(this, opponent, this.squareSize, false);
+    // this.squares[0][4].piece = new King(this, opponent, this.squareSize, false);
+    // this.squares[0][5].piece = new Bishop(this, opponent, this.squareSize, false);
+    // this.squares[0][6].piece = new Knight(this, opponent, this.squareSize, false);
+    this.squares[0][7].piece = new Rook(this, opponent, this.squareSize, false);
   }
 
 }
