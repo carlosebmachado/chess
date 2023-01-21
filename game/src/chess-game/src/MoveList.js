@@ -53,6 +53,8 @@ class MoveList {
   toString() {
     var str = '';
     var lineCount = 1;
+    var spaceCount = parseInt(this.moves.length / 2).toString().length;
+    // console.log(spaceCount);
     for (let i = 0; i < this.moves.length; ++i) {
       var move = this.moves[i];
 
@@ -61,9 +63,9 @@ class MoveList {
       var piece = MoveList.PIECES[move.piece.color[0]][move.piece.name[0]];
       var to = Board.RNAME[move.to.row] + Board.CNAME[move.to.col];
 
-      var moveText = `${piece}${move.take ? 'x' : ''}${to}`;
+      var moveText = `${piece}${move.take ? 'x' : ''}${to}${move.take ? '' : ' '}`;
       if (i % 2 === 0) {
-        str += `${lineCount}.\t\t${moveText}\t\t\t\t`;
+        str += `${lineCount.toString().padStart(spaceCount, ' ')}. ${moveText}   `;
         lineCount++;
       } else {
         str += `${moveText}\n`;

@@ -75,7 +75,7 @@ class Game {
 
   loadObjects() {
     this.testAnimation = new TestAnimation();
-    this.board = new Board();
+    this.board = new Board(Piece.WHITE);
     this.hud = new HUD(this.board);
   }
 
@@ -104,7 +104,7 @@ class Game {
     this.isTouching = true;
     this.isPushing = true;
 
-    console.log(`tocou em ${this.touchPosX}:${this.touchPosY}`);
+    // console.log(`tocou em ${this.touchPosX}:${this.touchPosY}`);
 
     e.preventDefault();
   }
@@ -113,7 +113,7 @@ class Game {
     this.isTouching = false
     this.isPushing = false;
 
-    console.log(`destocou em ${this.touchPosX}:${this.touchPosY}`);
+    // console.log(`destocou em ${this.touchPosX}:${this.touchPosY}`);
 
     e.preventDefault();
   }
@@ -127,7 +127,7 @@ class Game {
     this.pushPosX = this.touchPosX;
     this.pushPosY = this.touchPosY;
 
-    console.log(`moveu toque para ${this.touchPosX}:${this.touchPosY}`);
+    // console.log(`moveu toque para ${this.touchPosX}:${this.touchPosY}`);
 
     e.preventDefault();
   }
@@ -142,7 +142,7 @@ class Game {
     this.pushPosX = this.mousePosX;
     this.pushPosY = this.mousePosY;
 
-    console.log(`clicou em ${this.mousePosX}:${this.mousePosY}`);
+    // console.log(`clicou em ${this.mousePosX}:${this.mousePosY}`);
 
     e.preventDefault();
   }
@@ -151,7 +151,7 @@ class Game {
     this.isClicking = false;
     this.isPushing = false;
 
-    console.log(`desclicou em ${this.mousePosX}:${this.mousePosY}`);
+    // console.log(`desclicou em ${this.mousePosX}:${this.mousePosY}`);
 
     e.preventDefault();
   }
@@ -163,7 +163,7 @@ class Game {
     this.pushPosX = this.mousePosX;
     this.pushPosY = this.mousePosY;
 
-    console.log(`moveu mouse para ${this.mousePosX}:${this.mousePosY}`);
+    // console.log(`moveu mouse para ${this.mousePosX}:${this.mousePosY}`);
 
     e.preventDefault();
   }

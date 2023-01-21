@@ -45,7 +45,7 @@ class Piece {
   }
 
   updatePlayer(delta) {
-    if (!this.playable) return;
+    if (!this.playable || this.color !== this.board.turn) return;
 
     var isClicking = Game.get().isPushing;
     var xClick = Game.get().clickPosX;
@@ -74,50 +74,23 @@ class Piece {
       this.board.currentHolding = null;
       // console.log("not holding");
 
-      var isValidMove = false;
+      // var isValidMove = false;
 
       for (let i = 0; i < this.possibleMoves.length; i++) {
         var square = this.possibleMoves[i];
         if (square && xPos >= square.x && xPos <= square.x + this.squareSize &&
           yPos >= square.y && yPos <= square.y + this.squareSize) {
 
-          var pieceTaken = false;
-          if (square.piece) {
-            pieceTaken = true;
-          }
-
-          this.currentSquare.piece = null;
-          square.piece = this;
-          this.currentSquare = square;
-
-          isValidMove = true;
-
-          this.board.moveList.add({
-            piece: {
-              name: this.name,
-              color: this.color
-            },
-            from: {
-              row: this.currentSquare.row,
-              col: this.currentSquare.col
-            },
-            to: {
-              row: square.row,
-              col: square.col
-            },
-            take: pieceTaken
-          });
+          // isValidMove = true;
+          this.move(square);
 
           break;
-          // this.setClickPosition(square.x, square.y);
         }
       }
 
-      if (isValidMove) {
-        for (let i = 0; i < this.didValidMoveEvent.length; i++) {
-          this.didValidMoveEvent[i]();
-        }
-      }
+      // if (isValidMove) {
+      //   this.executeMoveEvents();
+      // }
     }
 
     if (this.isHolding) {
@@ -125,6 +98,44 @@ class Piece {
     } else {
       this.setHighlight(false);
     }
+  }
+
+  executeMoveEvents() {
+    for (let i = 0; i < this.didValidMoveEvent.length; i++) {
+      this.didValidMoveEvent[i]();
+    }
+  }
+
+  move(square) {
+    var pieceTaken = false;
+    if (square.piece) {
+      pieceTaken = true;
+      // todo add piece to taken list
+    }
+
+    this.currentSquare.piece = null;
+    square.piece = this;
+    this.currentSquare = square;
+
+    this.board.moveList.add({
+      piece: {
+        name: this.name,
+        color: this.color
+      },
+      from: {
+        row: this.currentSquare.row,
+        col: this.currentSquare.col
+      },
+      to: {
+        row: square.row,
+        col: square.col
+      },
+      take: pieceTaken
+    });
+    
+    this.executeMoveEvents();
+
+    this.board.nextTurn();
   }
 
   findCurrentSquare() {

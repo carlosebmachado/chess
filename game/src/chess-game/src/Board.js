@@ -25,7 +25,7 @@ class Board {
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'
   ];
 
-  constructor() {
+  constructor(playerColor) {
     this.size = 8;
     this.totalSize = Math.pow(this.size);
 
@@ -53,8 +53,8 @@ class Board {
     this.isHoldingAny = false;
     this.currentHolding = null;
 
-    // this.piece = new Piece('../src/chess-game/assets/white-king.png', this.squareSize);
-    this.initPieces(Piece.WHITE);
+    this.initPieces(playerColor);
+    this.bot = new CEngV0(this, playerColor == Piece.WHITE ? Piece.BLACK : Piece.WHITE);
 
     this.whiteEatedPieces = [];
     this.blackEatedPieces = [];
@@ -62,6 +62,8 @@ class Board {
     this.underAttackSquares = [];
 
     this.moveList = new MoveList();
+
+    this.turn = Piece.WHITE;
   }
 
   update(delta) {
@@ -74,35 +76,15 @@ class Board {
         square.update(delta);
         if (piece !== null) {
           piece.update(delta);
-          // this.underAttackSquares.push(...piece.possibleMoves);
         }
       }
     }
+    this.bot.update(delta);
   }
 
   render(g) {
     this.renderBoard(g);
     this.renderPieces(g);
-
-    // this.piece.render(g);
-
-    // var t = '';
-    // for (let i = 0; i < this.squares.length; i++) {
-    //   for (let j = 0; j < this.squares[i].length; j++) {
-
-    //     // t+='['+i+','+j+'] ';
-
-    //     // if (this.squares[i][j] !== null) {
-    //     //   t+='['+i+','+j+'] ';
-    //     // } else {
-    //     //   t+='null ';
-    //     // }
-
-    //     t+=this.squares[i][j]+'['+i+','+j+'] ';
-    //   }
-    //   t+='\n';
-    // }
-    // console.log(t+'\n\n\n');
   }
 
   renderBoard(g) {
@@ -129,6 +111,10 @@ class Board {
         }
       }
     }
+  }
+
+  nextTurn() {
+    this.turn = this.turn == Piece.WHITE ? Piece.BLACK : Piece.WHITE;
   }
 
   initPieces(color) {
