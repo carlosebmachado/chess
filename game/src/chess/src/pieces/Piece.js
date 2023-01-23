@@ -138,6 +138,60 @@ class Piece {
     this.board.nextTurn();
   }
 
+  findContinuousMovements(rowDir, colDir) {
+    var row = this.currentSquare.row;
+    var col = this.currentSquare.col;
+
+    while (true) {
+      var calcRow = row + rowDir;
+      var calcCol = col + colDir;
+      
+      if (!this.addNormalMovement(calcRow, calcCol)) {
+        break;
+      }
+
+      if (rowDir !== 0) {
+        rowDir += rowDir > 0 ? 1 : -1;
+      }
+
+      if (colDir !== 0) {
+        colDir += colDir > 0 ? 1 : -1;
+      }
+    }
+
+  }
+
+  addNormalMovement(row, col, king = false) {
+    if (!this.board.inBoardLimit(row, col)) {
+      return false;
+    }
+
+    var square = this.board.squares[row][col];
+
+    if (king && this.board.underAttackSquares.includes(square)) {
+      return false;
+    }
+
+    if (square && !square.piece) {
+      this.possibleMoves.push(square);
+      this.board.underAttackSquares.push(square);
+      return true;
+    }
+
+    if (square && square.piece && square.piece.color !== this.color) {
+      this.possibleMoves.push(square);
+      this.board.underAttackSquares.push(square);
+      this.board.pieceAttackSquares.push(square);
+      return false;
+    }
+
+    if (square && square.piece && square.piece.color === this.color) {
+      return false;
+    }
+    
+    return true;
+  }
+
   findCurrentSquare() {
     for (let i = 0; i < this.board.squares.length; i++) {
       for (let j = 0; j < this.board.squares[i].length; j++) {

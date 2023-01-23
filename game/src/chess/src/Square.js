@@ -32,10 +32,21 @@ class Square {
       g.circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 4, 'red');
     }
 
+    this.drawDebug(g);
+  }
+
+  drawDebug(g) {
     if (this.isUnderAttack()) {
       g.rect(this.x, this.y, this.size, this.size, 'rgba(255, 0, 0, 0.25)');
       // g.circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 4, 'red');
     }
+
+    var font = '16px monospace';
+    var color = 'green';
+
+    // debug square
+    var rcText = `${Board.RNAME[this.row]}${Board.CNAME[this.col]}`;
+    g.drawText(rcText, this.x + 5, this.y + 15, font, color);
   }
 
 }

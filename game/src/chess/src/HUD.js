@@ -36,7 +36,7 @@ class HUD {
     var tPad = 25;
     g.drawText(titleText.padStart(spaceCount, ' '), this.x + 10, listY + tPad, font, color);
     for (let i = 0; i < printLines.length; ++i) {
-      g.drawText(printLines[i], this.x + 10, listY + tPad * (i+2), font, color);
+      g.drawText(printLines[i], this.x + 10, listY + tPad * (i + 2), font, color);
     }
 
     // g.ctx.font = "48px serif";
