@@ -1,6 +1,6 @@
 class King extends Piece {
   constructor(board, color, squareSize, playable) {
-    super(board, `../src/chess/assets/${color}-king.png`, color, 'kingpawn', squareSize, playable);
+    super(board, `../src/chess/assets/${color}-king.png`, color, 'king', squareSize, playable);
     this.firstMove = false;
 
     this.didValidMoveEvent.push(() => {
@@ -12,14 +12,32 @@ class King extends Piece {
     super.update(delta);
     if (!this.currentSquare) return;
 
+    this.possibleMoves = [];
+
     this.findMovements();
   }
 
   findMovements() {
-    for (var row = -1; row < 2; ++row) {
-      for (var col = -1; col < 2; ++col) {
+    for (let row = -1; row < 2; ++row) {
+      for (let col = -1; col < 2; ++col) {
         if (row === 0 && col === 0) continue;
-        this.addNormalMovement(this.currentSquare.row + row, this.currentSquare.col + col);
+
+        var calcRow = this.currentSquare.row + row;
+        var calcCol = this.currentSquare.col + col
+
+        if (!this.board.inBoardLimit(calcRow, calcCol)) {
+          continue;
+        }
+
+        var movSquare = this.board.squares[calcRow][calcCol];
+
+        if (this.board.underAttackSquares[Board.getInverseListColor(this.color)].includes(movSquare)) {
+          if (movSquare.piece && movSquare.piece.color === this.color) {
+            this.addNormalMovement(calcRow, calcCol);
+          }
+        } else {
+          this.addNormalMovement(calcRow, calcCol);
+        }
       }
     }
   }

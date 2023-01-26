@@ -11,7 +11,7 @@ class Queen extends Piece {
   update(delta) {
     super.update(delta);
     if (!this.currentSquare) return;
-    
+
     this.possibleMoves = [];
 
     // right move
@@ -31,6 +31,7 @@ class Queen extends Piece {
     this.findContinuousMovements(-1, 1);
     // down-left move
     this.findContinuousMovements(1, -1);
+
   }
 
   render(g) {

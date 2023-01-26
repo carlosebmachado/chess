@@ -11,7 +11,7 @@ class Bishop extends Piece {
   update(delta) {
     super.update(delta);
     if (!this.currentSquare) return;
-    
+
     this.possibleMoves = [];
 
     // top-left move
@@ -22,6 +22,7 @@ class Bishop extends Piece {
     this.findContinuousMovements(-1, 1);
     // down-left move
     this.findContinuousMovements(1, -1);
+
   }
 
   render(g) {

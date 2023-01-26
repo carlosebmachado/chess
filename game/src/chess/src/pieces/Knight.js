@@ -30,6 +30,7 @@ class Knight extends Piece {
     this.findMovements(-1, -2);
     // up-left move
     this.findMovements(-2, -1);
+
   }
 
   findMovements(rowOffset, colOffset) {

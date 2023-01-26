@@ -16,12 +16,7 @@ class Square {
   }
 
   isUnderAttack() {
-    for (let i = 0; i < this.board.underAttackSquares.length; ++i) {
-      if (this.board.underAttackSquares[i].row == this.row && this.board.underAttackSquares[i].col == this.col) {
-        return true;
-      }
-    }
-    return false;
+    this.board.underAttackSquares.includes(this);
   }
 
   render(g) {

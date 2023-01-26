@@ -74,23 +74,17 @@ class Piece {
       this.board.currentHolding = null;
       // console.log("not holding");
 
-      // var isValidMove = false;
-
       for (let i = 0; i < this.possibleMoves.length; i++) {
         var square = this.possibleMoves[i];
         if (square && xPos >= square.x && xPos <= square.x + this.squareSize &&
           yPos >= square.y && yPos <= square.y + this.squareSize) {
 
-          // isValidMove = true;
           this.move(square);
 
           break;
         }
       }
 
-      // if (isValidMove) {
-      //   this.executeMoveEvents();
-      // }
     }
 
     if (this.isHolding) {
@@ -161,26 +155,22 @@ class Piece {
 
   }
 
-  addNormalMovement(row, col, king = false) {
+  addNormalMovement(row, col) {
     if (!this.board.inBoardLimit(row, col)) {
       return false;
     }
 
     var square = this.board.squares[row][col];
 
-    if (king && this.board.underAttackSquares.includes(square)) {
-      return false;
-    }
-
     if (square && !square.piece) {
       this.possibleMoves.push(square);
-      this.board.underAttackSquares.push(square);
+      this.board.underAttackSquares[Board.getListColor(this.color)].push(square);
       return true;
     }
 
     if (square && square.piece && square.piece.color !== this.color) {
       this.possibleMoves.push(square);
-      this.board.underAttackSquares.push(square);
+      this.board.underAttackSquares[Board.getListColor(this.color)].push(square);
       this.board.pieceAttackSquares.push(square);
       return false;
     }
@@ -213,7 +203,6 @@ class Piece {
         square.highlight = highlight;
       }
     }
-    this.possibleMoves = [];
   }
 
   setClickPosition(x, y) {

@@ -11,7 +11,7 @@ class Rook extends Piece {
   update(delta) {
     super.update(delta);
     if (!this.currentSquare) return;
-    
+
     this.possibleMoves = [];
 
     // right move
@@ -22,6 +22,7 @@ class Rook extends Piece {
     this.findContinuousMovements(1, 0);
     // // down move
     this.findContinuousMovements(-1, 0);
+
   }
 
   render(g) {

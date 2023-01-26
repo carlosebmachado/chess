@@ -17,6 +17,17 @@ class Board {
   static G = 6;
   static H = 7;
 
+  static LIST_WHITE = 0;
+  static LIST_BLACK = 1;
+
+  static getListColor(color) {
+    return color === Piece.WHITE ? Board.LIST_WHITE : Board.LIST_BLACK;
+  }
+
+  static getInverseListColor(color) {
+    return color === Piece.WHITE ? Board.LIST_BLACK : Board.LIST_WHITE;
+  }
+
   static RNAME = [
     '8', '7', '6', '5', '4', '3', '2', '1'
   ];
@@ -24,6 +35,10 @@ class Board {
   static CNAME = [
     'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'
   ];
+
+  static getSquareName(row, col) {
+    return Board.CNAME[col] + Board.RNAME[row];
+  }
 
   constructor(playerColor) {
     this.size = 8;
@@ -53,35 +68,55 @@ class Board {
     this.isHoldingAny = false;
     this.currentHolding = null;
 
-    this.initPieces(playerColor);
-    this.bot = new CEngV0(this, playerColor == Piece.WHITE ? Piece.BLACK : Piece.WHITE);
-
     this.whiteEatedPieces = [];
     this.blackEatedPieces = [];
 
-    this.underAttackSquares = [];
+    this.initUnderAttackSquares();
+
     this.pieceAttackSquares = [];
 
     this.moveList = new MoveList();
 
     this.turn = Piece.WHITE;
+    this.prevTurn = null;
+    this.updateGame = false;
+
+    this.initPieces(playerColor);
+    this.bot = new Bot(this, playerColor == Piece.WHITE ? Piece.BLACK : Piece.WHITE);
+  }
+
+  initUnderAttackSquares() {
+    this.underAttackSquares = [];
+    for (let i = 0; i < 2; ++i) {
+      this.underAttackSquares.push([]);
+    }
   }
 
   update(delta) {
-    this.underAttackSquares = [];
+    this.initUnderAttackSquares();
+
     // console.log("board update");
     for (let i = 0; i < this.squares.length; i++) {
       for (let j = 0; j < this.squares[i].length; j++) {
         var square = this.squares[i][j];
         var piece = square.piece;
+
         square.update(delta);
         if (piece !== null) {
+          if (piece.name === 'king') continue;
           piece.update(delta);
         }
       }
     }
+
+    for (let i = 0; i < this.kings.length; i++) {
+      var king = this.kings[i];
+      king.update(delta);
+    }
+
     this.bot.update(delta);
     // if (this.turn !== Piece.WHITE) this.turn = Piece.WHITE;
+
   }
 
   render(g) {
@@ -93,9 +128,14 @@ class Board {
     for (let i = 0; i < this.squares.length; i++) {
       for (let j = 0; j < this.squares[i].length; j++) {
         var square = this.squares[i][j];
+        if (this.currentHolding && this.currentHolding.currentSquare === square) continue;
         square.render(g);
         // console.log(square);
       }
+    }
+
+    if (this.currentHolding) {
+      this.currentHolding.currentSquare.render(g);
     }
   }
 
@@ -105,13 +145,16 @@ class Board {
         var square = this.squares[i][j];
 
         if (square.piece !== null) {
-          if (!square.piece.isHolding) {
-            square.piece.x = square.x;
-            square.piece.y = square.y;
-          }
+          if (square.piece === this.currentHolding) continue;
+          square.piece.x = square.x;
+          square.piece.y = square.y;
           square.piece.render(g);
         }
       }
+    }
+
+    if (this.currentHolding) {
+      this.currentHolding.render(g);
     }
   }
 
@@ -120,14 +163,14 @@ class Board {
   }
 
   nextTurn() {
-    this.turn = this.turn == Piece.WHITE ? Piece.BLACK : Piece.WHITE;
+    this.turn = this.turn === Piece.WHITE ? Piece.BLACK : Piece.WHITE;
   }
 
   initPieces(color) {
     var player = color;
-    var opponent = color == Piece.WHITE ? Piece.BLACK : Piece.WHITE;
+    var opponent = color === Piece.WHITE ? Piece.BLACK : Piece.WHITE;
 
-    
+
     // this.squares[3][3].piece = new Knight(this, player, this.squareSize, true);
     // this.squares[6][3].piece = new Pawn(this, player, this.squareSize, true);
     // this.squares[3][3].piece = new King(this, player, this.squareSize, true);
@@ -167,10 +210,15 @@ class Board {
     this.squares[0][5].piece = new Bishop(this, opponent, this.squareSize, false);
     this.squares[0][6].piece = new Knight(this, opponent, this.squareSize, false);
     this.squares[0][7].piece = new Rook(this, opponent, this.squareSize, false);
-  }
 
-  static getSquareName(row, col) {
-    return Board.CNAME[col] + Board.RNAME[row];
+    this.kings = Array(2).fill(null);
+    if (player === Piece.WHITE) {
+      this.kings[Board.LIST_WHITE] = this.squares[7][4].piece;
+      this.kings[Board.LIST_BLACK] = this.squares[0][4].piece;
+    } else {
+      this.kings[Board.LIST_WHITE] = this.squares[0][4].piece;
+      this.kings[Board.LIST_BLACK] = this.squares[7][4].piece;
+    }
   }
 
 }

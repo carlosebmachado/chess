@@ -12,15 +12,17 @@ class Pawn extends Piece {
     super.update(delta);
     if (!this.currentSquare) return;
 
+    this.possibleMoves = [];
+
     if (this.playable) {
       this.findMovements(1);
     } else {
       this.findMovements(-1);
     }
+
   }
 
   findMovements(dir) {
-    this.possibleMoves = [];
     var row = this.currentSquare.row;
     var col = this.currentSquare.col;
 
@@ -37,7 +39,7 @@ class Pawn extends Piece {
       let square = this.board.squares[row - dir][col - dir];
       if (square && square.piece && square.piece.color !== this.color) {
         this.possibleMoves.push(square);
-        this.board.underAttackSquares.push(square);
+        this.board.underAttackSquares[Board.getListColor(this.color)].push(square);
         this.board.pieceAttackSquares.push(square);
       }
     }
@@ -47,7 +49,7 @@ class Pawn extends Piece {
       let square = this.board.squares[row - dir][col + dir];
       if (square && square.piece && square.piece.color !== this.color) {
         this.possibleMoves.push(square);
-        this.board.underAttackSquares.push(square);
+        this.board.underAttackSquares[Board.getListColor(this.color)].push(square);
         this.board.pieceAttackSquares.push(square);
       }
     }
