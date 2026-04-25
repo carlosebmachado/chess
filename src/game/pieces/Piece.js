@@ -2,11 +2,11 @@ class Piece {
   static WHITE = "white";
   static BLACK = "black";
 
-  constructor(board, src, color, name, squareSize, playable) {
+  constructor(board, color, name, squareSize, playable) {
     this.board = board;
 
     this.texture = new Image();
-    this.texture.src = src;
+    this.texture.src = `/src/game/assets/${color}-${name}.png`;
 
     this.x = 0;
     this.y = 0;

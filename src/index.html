@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chess Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <canvas id="game-canvas"></canvas>
+  <script src="/src/game/Game.js"></script>
+  <script src="/src/game/TestAnimation.js"></script>
+  <script src="/src/game/Board.js"></script>
+  <script src="/src/game/Square.js"></script>
+  <script src="/src/game/MoveList.js"></script>
+  <script src="/src/game/HUD.js"></script>
+  <script src="/src/game/Bot.js"></script>
+  <script src="/src/game/ceng/CEngV0.js"></script>
+  <script src="/src/game/Utils.js"></script>
+  <script src="/src/game/pieces/Piece.js"></script>
+  <script src="/src/game/pieces/Pawn.js"></script>
+  <script src="/src/game/pieces/Rook.js"></script>
+  <script src="/src/game/pieces/Knight.js"></script>
+  <script src="/src/game/pieces/Bishop.js"></script>
+  <script src="/src/game/pieces/Queen.js"></script>
+  <script src="/src/game/pieces/King.js"></script>
+  <script src="/src/game/Graphics.js"></script>
+  <script>
+    var canvas = document.getElementById('game-canvas');
+
+    var game = Game.get();
+    game.start(canvas, Game.HORIZONTAL_ORIENTATION);
+    game.run();
+  </script>
+</body>
+
+</html>

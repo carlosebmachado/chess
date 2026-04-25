@@ -1,6 +1,6 @@
-class Rook extends Piece {
+class Queen extends Piece {
   constructor(board, color, squareSize, playable) {
-    super(board, `../src/chess/assets/${color}-rook.png`, color, 'rook', squareSize, playable);
+    super(board, color, 'queen', squareSize, playable);
     this.firstMove = false;
 
     this.didValidMoveEvent.push(() => {
@@ -22,6 +22,15 @@ class Rook extends Piece {
     this.findContinuousMovements(1, 0);
     // // down move
     this.findContinuousMovements(-1, 0);
+
+    // top-left move
+    this.findContinuousMovements(-1, -1);
+    // down-right move
+    this.findContinuousMovements(1, 1);
+    // top-right move
+    this.findContinuousMovements(-1, 1);
+    // down-left move
+    this.findContinuousMovements(1, -1);
 
   }
 

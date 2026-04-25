@@ -1,6 +1,6 @@
 class Knight extends Piece {
   constructor(board, color, squareSize, playable) {
-    super(board, `../src/chess/assets/${color}-knight.png`, color, 'knight', squareSize, playable);
+    super(board, color, 'knight', squareSize, playable);
     this.firstMove = false;
 
     this.didValidMoveEvent.push(() => {

@@ -1,6 +1,6 @@
 class Pawn extends Piece {
   constructor(board, color, squareSize, playable) {
-    super(board, `../src/chess/assets/${color}-pawn.png`, color, 'pawn', squareSize, playable);
+    super(board, color, 'pawn', squareSize, playable);
     this.firstMove = false;
 
     this.didValidMoveEvent.push(() => {

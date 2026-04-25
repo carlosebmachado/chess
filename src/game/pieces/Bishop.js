@@ -1,6 +1,6 @@
 class Bishop extends Piece {
   constructor(board, color, squareSize, playable) {
-    super(board, `../src/chess/assets/${color}-bishop.png`, color, 'bishop', squareSize, playable);
+    super(board, color, 'bishop', squareSize, playable);
     this.firstMove = false;
 
     this.didValidMoveEvent.push(() => {
