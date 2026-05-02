@@ -73,6 +73,7 @@ class Board {
 
     this.initUnderAttackSquares();
 
+    // squares with pieces under attack
     this.pieceAttackSquares = [];
 
     this.moveList = new MoveList();
@@ -92,8 +93,33 @@ class Board {
     }
   }
 
+  addUnderAttackSquare(square, color) {
+    if (!this.underAttackSquares[Board.getListColor(color)].includes(square)) {
+      this.underAttackSquares[Board.getListColor(color)].push(square);
+    }
+  }
+
+  addPieceAttackSquare(square) {
+    if (!this.pieceAttackSquares.includes(square)) {
+      this.pieceAttackSquares.push(square);
+    }
+  }
+
+  clearHighlight() {
+    for (let i = 0; i < this.squares.length; i++) {
+      for (let j = 0; j < this.squares[i].length; j++) {
+        var square = this.squares[i][j];
+        square.highlight = false;
+      }
+    }
+  }
+
   update(delta) {
+    this.bot.update(delta);
+
     this.initUnderAttackSquares();
+    
+    this.clearHighlight();
 
     // console.log("board update");
     for (let i = 0; i < this.squares.length; i++) {
@@ -113,8 +139,6 @@ class Board {
       var king = this.kings[i];
       king.update(delta);
     }
-
-    this.bot.update(delta);
     // if (this.turn !== Piece.WHITE) this.turn = Piece.WHITE;
 
   }

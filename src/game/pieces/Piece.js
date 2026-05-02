@@ -89,8 +89,6 @@ class Piece {
 
     if (this.isHolding) {
       this.setHighlight(true);
-    } else {
-      this.setHighlight(false);
     }
   }
 
@@ -101,7 +99,12 @@ class Piece {
   }
 
   move(square) {
+    if (!square) {
+      return;
+    }
+
     var pieceTaken = false;
+    
     if (square.piece) {
       pieceTaken = true;
       // todo add piece to taken list
@@ -162,20 +165,24 @@ class Piece {
 
     var square = this.board.squares[row][col];
 
-    if (square && !square.piece) {
-      this.possibleMoves.push(square);
-      this.board.underAttackSquares[Board.getListColor(this.color)].push(square);
-      return true;
-    }
-
-    if (square && square.piece && square.piece.color !== this.color) {
-      this.possibleMoves.push(square);
-      this.board.underAttackSquares[Board.getListColor(this.color)].push(square);
-      this.board.pieceAttackSquares.push(square);
+    if (!square) {
       return false;
     }
 
-    if (square && square.piece && square.piece.color === this.color) {
+    if (!square.piece) {
+      this.possibleMoves.push(square);
+      this.board.addUnderAttackSquare(square, this.color);
+      return true;
+    }
+
+    if (square.piece && square.piece.color !== this.color) {
+      this.possibleMoves.push(square);
+      this.board.addUnderAttackSquare(square, this.color);
+      this.board.addPieceAttackSquare(square);
+      return false;
+    }
+
+    if (square.piece && square.piece.color === this.color) {
       return false;
     }
     

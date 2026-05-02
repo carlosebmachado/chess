@@ -30,7 +30,9 @@ class King extends Piece {
         }
 
         var movSquare = this.board.squares[calcRow][calcCol];
-
+        
+        // todo: fix the under attack list filling, it is not including pieces that attacks the same color pieces, 
+        // so the king can move to a square that is under attack by an ally piece, which is not correct
         if (this.board.underAttackSquares[Board.getInverseListColor(this.color)].includes(movSquare)) {
           if (movSquare.piece && movSquare.piece.color === this.color) {
             this.addNormalMovement(calcRow, calcCol);
