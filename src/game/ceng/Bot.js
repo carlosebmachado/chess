@@ -7,6 +7,8 @@ class Bot {
   update(delta) {
     if (this.board.turn !== this.color) return;
 
+    if (this.board.gameOver) return;
+
     var botPieces = [];
 
     for (let i = 0; i < this.board.squares.length; ++i) {
@@ -19,12 +21,18 @@ class Bot {
       }
     }
 
-    var pieceIndex = Utils.randomInt(0, botPieces.length - 1);
-    var piece = botPieces[pieceIndex];
+    Utils.shuffle(botPieces);
 
-    var moveIndex = Utils.randomInt(0, piece.possibleMoves.length - 1);
-    this.move(piece.possibleMoves[moveIndex], piece);
-
+    for (let pi = 0; pi < botPieces.length; ++pi) {
+      var piece = botPieces[pi];
+      Utils.shuffle(piece.possibleMoves);
+      for (let mi = 0; mi < piece.possibleMoves.length; ++mi) {
+        if (this.board.isMoveLegal(piece, piece.possibleMoves[mi])) {
+          this.move(piece.possibleMoves[mi], piece);
+          return;
+        }
+      }
+    }
   }
 
   move(square, piece) {

@@ -14,12 +14,15 @@ class Pawn extends Piece {
 
     this.possibleMoves = [];
 
+    this.calcMoves();
+  }
+
+  calcMoves() {
     if (this.playable) {
       this.findMovements(1);
     } else {
       this.findMovements(-1);
     }
-
   }
 
   findMovements(dir) {
@@ -37,20 +40,24 @@ class Pawn extends Piece {
     // attack move left
     if (this.board.inBoardLimit(row - dir, col - dir)) {
       let square = this.board.squares[row - dir][col - dir];
-      if (square && square.piece && square.piece.color !== this.color) {
-        this.possibleMoves.push(square);
+      if (square) {
         this.board.underAttackSquares[Board.getListColor(this.color)].push(square);
-        this.board.pieceAttackSquares.push(square);
+        if (square.piece && square.piece.color !== this.color) {
+          this.possibleMoves.push(square);
+          this.board.pieceAttackSquares.push(square);
+        }
       }
     }
 
     // attack move right
     if (this.board.inBoardLimit(row - dir, col + dir)) {
       let square = this.board.squares[row - dir][col + dir];
-      if (square && square.piece && square.piece.color !== this.color) {
-        this.possibleMoves.push(square);
+      if (square) {
         this.board.underAttackSquares[Board.getListColor(this.color)].push(square);
-        this.board.pieceAttackSquares.push(square);
+        if (square.piece && square.piece.color !== this.color) {
+          this.possibleMoves.push(square);
+          this.board.pieceAttackSquares.push(square);
+        }
       }
     }
 

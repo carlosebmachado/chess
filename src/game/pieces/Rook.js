@@ -14,15 +14,14 @@ class Rook extends Piece {
 
     this.possibleMoves = [];
 
-    // right move
-    this.findContinuousMovements(0, 1);
-    // // left move
-    this.findContinuousMovements(0, -1);
-    // // up move
-    this.findContinuousMovements(1, 0);
-    // // down move
-    this.findContinuousMovements(-1, 0);
+    this.calcMoves();
+  }
 
+  calcMoves() {
+    this.findContinuousMovements(0, 1);
+    this.findContinuousMovements(0, -1);
+    this.findContinuousMovements(1, 0);
+    this.findContinuousMovements(-1, 0);
   }
 
   render(g) {

@@ -14,24 +14,19 @@ class Queen extends Piece {
 
     this.possibleMoves = [];
 
-    // right move
+    this.calcMoves();
+  }
+
+  calcMoves() {
     this.findContinuousMovements(0, 1);
-    // // left move
     this.findContinuousMovements(0, -1);
-    // // up move
     this.findContinuousMovements(1, 0);
-    // // down move
     this.findContinuousMovements(-1, 0);
 
-    // top-left move
     this.findContinuousMovements(-1, -1);
-    // down-right move
     this.findContinuousMovements(1, 1);
-    // top-right move
     this.findContinuousMovements(-1, 1);
-    // down-left move
     this.findContinuousMovements(1, -1);
-
   }
 
   render(g) {

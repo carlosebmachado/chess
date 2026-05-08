@@ -16,7 +16,8 @@ class Square {
   }
 
   isUnderAttack() {
-    this.board.underAttackSquares.includes(this);
+    return this.board.underAttackSquares[0].includes(this) ||
+           this.board.underAttackSquares[1].includes(this);
   }
 
   render(g) {

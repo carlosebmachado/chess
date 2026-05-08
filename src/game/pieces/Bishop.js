@@ -14,15 +14,14 @@ class Bishop extends Piece {
 
     this.possibleMoves = [];
 
-    // top-left move
-    this.findContinuousMovements(-1, -1);
-    // down-right move
-    this.findContinuousMovements(1, 1);
-    // top-right move
-    this.findContinuousMovements(-1, 1);
-    // down-left move
-    this.findContinuousMovements(1, -1);
+    this.calcMoves();
+  }
 
+  calcMoves() {
+    this.findContinuousMovements(-1, -1);
+    this.findContinuousMovements(1, 1);
+    this.findContinuousMovements(-1, 1);
+    this.findContinuousMovements(1, -1);
   }
 
   render(g) {

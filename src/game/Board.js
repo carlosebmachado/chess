@@ -82,6 +82,9 @@ class Board {
     this.prevTurn = null;
     this.updateGame = false;
 
+    this.gameState = 'normal';
+    this.gameOver = false;
+
     this.initPieces(playerColor);
     this.bot = new Bot(this, playerColor == Piece.WHITE ? Piece.BLACK : Piece.WHITE);
   }
@@ -139,7 +142,14 @@ class Board {
       var king = this.kings[i];
       king.update(delta);
     }
-    // if (this.turn !== Piece.WHITE) this.turn = Piece.WHITE;
+
+    for (let i = 0; i < this.kings.length; i++) {
+      var king = this.kings[i];
+      king.possibleMoves = [];
+      king.calcMoves();
+    }
+
+    this.checkGameState();
 
   }
 
@@ -242,6 +252,114 @@ class Board {
     } else {
       this.kings[Board.LIST_WHITE] = this.squares[0][4].piece;
       this.kings[Board.LIST_BLACK] = this.squares[7][4].piece;
+    }
+  }
+
+  isInCheck(color) {
+    var king = this.kings[Board.getListColor(color)];
+    if (!king || !king.currentSquare) return false;
+    return this.underAttackSquares[Board.getInverseListColor(color)].includes(king.currentSquare);
+  }
+
+  recomputeAttacks() {
+    this.initUnderAttackSquares();
+    for (let i = 0; i < this.squares.length; i++) {
+      for (let j = 0; j < this.squares[i].length; j++) {
+        var piece = this.squares[i][j].piece;
+        if (piece !== null && piece.name !== 'king') {
+          piece.possibleMoves = [];
+          piece.calcMoves();
+        }
+      }
+    }
+    for (let i = 0; i < this.kings.length; i++) {
+      var king = this.kings[i];
+      if (king) {
+        king.possibleMoves = [];
+        king.calcMoves();
+      }
+    }
+    for (let i = 0; i < this.kings.length; i++) {
+      var king = this.kings[i];
+      if (king) {
+        king.possibleMoves = [];
+        king.calcMoves();
+      }
+    }
+  }
+
+  isMoveLegal(piece, targetSquare) {
+    var fromSquare = piece.currentSquare;
+    var capturedPiece = targetSquare.piece;
+    var playerColor = piece.color;
+
+    var savedAttacks = [
+      [...this.underAttackSquares[0]],
+      [...this.underAttackSquares[1]]
+    ];
+    var savedMoves = new Map();
+    for (let i = 0; i < this.squares.length; i++) {
+      for (let j = 0; j < this.squares[i].length; j++) {
+        var p = this.squares[i][j].piece;
+        if (p) {
+          savedMoves.set(p, [...p.possibleMoves]);
+        }
+      }
+    }
+
+    fromSquare.piece = null;
+    targetSquare.piece = piece;
+    piece.currentSquare = targetSquare;
+
+    this.recomputeAttacks();
+
+    var inCheck = this.isInCheck(playerColor);
+
+    fromSquare.piece = piece;
+    targetSquare.piece = capturedPiece;
+    piece.currentSquare = fromSquare;
+
+    this.underAttackSquares = savedAttacks;
+    for (let [p, moves] of savedMoves) {
+      p.possibleMoves = moves;
+    }
+
+    return !inCheck;
+  }
+
+  hasLegalMoves(color) {
+    for (let i = 0; i < this.squares.length; i++) {
+      for (let j = 0; j < this.squares[i].length; j++) {
+        var piece = this.squares[i][j].piece;
+        if (piece && piece.color === color) {
+          for (let k = 0; k < piece.possibleMoves.length; k++) {
+            if (this.isMoveLegal(piece, piece.possibleMoves[k])) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  checkGameState() {
+    if (this.gameOver) return;
+
+    var color = this.turn;
+    var inCheck = this.isInCheck(color);
+    var hasLegal = this.hasLegalMoves(color);
+
+    if (inCheck && !hasLegal) {
+      this.gameState = 'checkmate';
+      this.gameOver = true;
+    } else if (!inCheck && !hasLegal) {
+      this.gameState = 'stalemate';
+      this.gameOver = true;
+    } else if (inCheck) {
+      this.gameState = 'check';
+    } else {
+      this.gameState = 'normal';
     }
   }
 

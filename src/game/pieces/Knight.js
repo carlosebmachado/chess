@@ -14,23 +14,18 @@ class Knight extends Piece {
 
     this.possibleMoves = [];
 
-    // up-right move
-    this.findMovements(-2, 1);
-    // right-up move
-    this.findMovements(-1, 2);
-    // right-down move
-    this.findMovements(1, 2);
-    // down-right move
-    this.findMovements(2, 1);
-    // down-left move
-    this.findMovements(2, -1);
-    // left-down move
-    this.findMovements(1, -2);
-    // left-up move
-    this.findMovements(-1, -2);
-    // up-left move
-    this.findMovements(-2, -1);
+    this.calcMoves();
+  }
 
+  calcMoves() {
+    this.findMovements(-2, 1);
+    this.findMovements(-1, 2);
+    this.findMovements(1, 2);
+    this.findMovements(2, 1);
+    this.findMovements(2, -1);
+    this.findMovements(1, -2);
+    this.findMovements(-1, -2);
+    this.findMovements(-2, -1);
   }
 
   findMovements(rowOffset, colOffset) {

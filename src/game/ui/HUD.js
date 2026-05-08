@@ -39,8 +39,21 @@ class HUD {
       g.drawText(printLines[i], this.x + 10, listY + tPad * (i + 2), font, color);
     }
 
-    // g.ctx.font = "48px serif";
-    // g.ctx.fillStyle = "black";
-    // g.ctx.fillText("Hello world", this.x, listY);
+    // game state
+    if (this.board.gameState !== 'normal') {
+      var stateFont = '20px monospace';
+      var stateY = playerY + playerH / 2;
+      var stateText = '';
+      if (this.board.gameState === 'check') {
+        stateText = 'Check!';
+        g.drawText(stateText, this.x + 10, stateY, stateFont, 'yellow');
+      } else if (this.board.gameState === 'checkmate') {
+        stateText = 'Checkmate!';
+        g.drawText(stateText, this.x + 10, stateY, stateFont, 'red');
+      } else if (this.board.gameState === 'stalemate') {
+        stateText = 'Stalemate!';
+        g.drawText(stateText, this.x + 10, stateY, stateFont, 'gray');
+      }
+    }
   }
 }

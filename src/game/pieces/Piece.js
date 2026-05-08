@@ -92,6 +92,9 @@ class Piece {
     }
   }
 
+  calcMoves() {
+  }
+
   executeMoveEvents() {
     for (let i = 0; i < this.didValidMoveEvent.length; i++) {
       this.didValidMoveEvent[i]();
@@ -103,14 +106,18 @@ class Piece {
       return;
     }
 
-    var pieceTaken = false;
-    
-    if (square.piece) {
-      pieceTaken = true;
-      // todo add piece to taken list
+    if (!this.board.isMoveLegal(this, square)) {
+      return;
     }
 
-    this.currentSquare.piece = null;
+    var fromSquare = this.currentSquare;
+    var pieceTaken = false;
+
+    if (square.piece) {
+      pieceTaken = true;
+    }
+
+    fromSquare.piece = null;
     square.piece = this;
     this.currentSquare = square;
 
@@ -120,8 +127,8 @@ class Piece {
         color: this.color
       },
       from: {
-        row: this.currentSquare.row,
-        col: this.currentSquare.col
+        row: fromSquare.row,
+        col: fromSquare.col
       },
       to: {
         row: square.row,
@@ -129,7 +136,7 @@ class Piece {
       },
       take: pieceTaken
     });
-    
+
     this.executeMoveEvents();
 
     this.board.nextTurn();
@@ -183,6 +190,7 @@ class Piece {
     }
 
     if (square.piece && square.piece.color === this.color) {
+      this.board.addUnderAttackSquare(square, this.color);
       return false;
     }
     
