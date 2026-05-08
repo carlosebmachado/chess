@@ -327,6 +327,58 @@ class Board {
     return !inCheck;
   }
 
+  isCastlingLegal(king, targetSquare) {
+    var colDiff = targetSquare.col - king.currentSquare.col;
+    var row = king.currentSquare.row;
+    var rookStartCol = colDiff > 0 ? 7 : 0;
+    var rookDestCol = colDiff > 0 ? 5 : 3;
+    var fromKingSquare = king.currentSquare;
+    var rookStartSquare = this.squares[row][rookStartCol];
+    var rookDestSquare = this.squares[row][rookDestCol];
+    var rook = rookStartSquare.piece;
+
+    if (!rook || rook.name !== 'rook') return false;
+
+    var savedAttacks = [
+      [...this.underAttackSquares[0]],
+      [...this.underAttackSquares[1]]
+    ];
+    var savedMoves = new Map();
+    for (let i = 0; i < this.squares.length; i++) {
+      for (let j = 0; j < this.squares[i].length; j++) {
+        var p = this.squares[i][j].piece;
+        if (p) savedMoves.set(p, [...p.possibleMoves]);
+      }
+    }
+
+    fromKingSquare.piece = null;
+    targetSquare.piece = king;
+    king.currentSquare = targetSquare;
+
+    rookStartSquare.piece = null;
+    rookDestSquare.piece = rook;
+    rook.currentSquare = rookDestSquare;
+
+    this.recomputeAttacks();
+
+    var inCheck = this.isInCheck(king.color);
+
+    fromKingSquare.piece = king;
+    targetSquare.piece = null;
+    king.currentSquare = fromKingSquare;
+
+    rookStartSquare.piece = rook;
+    rookDestSquare.piece = null;
+    rook.currentSquare = rookStartSquare;
+
+    this.underAttackSquares = savedAttacks;
+    for (let [p, moves] of savedMoves) {
+      p.possibleMoves = moves;
+    }
+
+    return !inCheck;
+  }
+
   hasLegalMoves(color) {
     for (let i = 0; i < this.squares.length; i++) {
       for (let j = 0; j < this.squares[i].length; j++) {

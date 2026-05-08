@@ -64,7 +64,7 @@ Each component owns its state and renders itself via `render(g)` where `g` is a 
 - `addNormalMovement(row, col)` and `findContinuousMovements(rowDir, colDir)` are shared helpers in `Piece.js`
 - Each piece implements `calcMoves()` for pure move computation (extracted from `update()` for simulation use)
 - Turn switching: `board.nextTurn()`
-- No castling, en passant, or pawn promotion implemented yet
+- No en passant or pawn promotion implemented yet
 
 ## Game State & Check/Checkmate
 - `Board.gameState`: `'normal'` | `'check'` | `'checkmate'` | `'stalemate'`
@@ -76,6 +76,17 @@ Each component owns its state and renders itself via `render(g)` where `g` is a 
 - Under-attack squares are correctly tracked for all squares including those blocked by same-color pieces
 - Pawn diagonal attacks are always added to `underAttackSquares`, regardless of occupancy
 - Kings compute moves after all attacks are populated (including the other king's attacks)
+
+## Castling
+- Implemented in `King.js` (`checkCastling`, `executeCastling`) and `Board.js` (`isCastlingLegal`)
+- Both kingside (0-0) and queenside (0-0-0) supported for both colors
+- Preconditions (all checked by `checkCastling`):
+  - King and rook must not have moved (`firstMove`)
+  - Squares between king and rook must be empty
+  - King must not be in check
+  - King must not pass through a square under attack
+  - King must not end up in check (verified by `isCastlingLegal` which simulates the full king+rook move and recomputes all attacks)
+- King's `move()` is overridden: a 2-square column difference triggers `executeCastling` which moves both king and rook, sets both `firstMove` flags, and records the move
 
 ## Testing
 No test framework is currently configured. If adding tests, put them in a `tests/` directory.
