@@ -71,10 +71,13 @@ class Pawn extends Piece {
 
     // first 2 squares move
     if (!this.firstMove) {
-      let square = this.board.squares[row - (dir < 0 ? dir - 1 : dir + 1)][col];
-      var square2 = this.board.squares[row - dir][col];
-      if (!square2.piece && !square.piece) {
-        this.possibleMoves.push(square);
+      var doubleRow = row - (dir < 0 ? dir - 1 : dir + 1);
+      if (this.board.inBoardLimit(doubleRow, col)) {
+        let square = this.board.squares[doubleRow][col];
+        var square2 = this.board.squares[row - dir][col];
+        if (!square2.piece && !square.piece) {
+          this.possibleMoves.push(square);
+        }
       }
     }
   }

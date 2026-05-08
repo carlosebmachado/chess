@@ -40,7 +40,7 @@ class Board {
     return Board.CNAME[col] + Board.RNAME[row];
   }
 
-  constructor(playerColor) {
+  constructor(playerColor, options) {
     this.size = 8;
     this.totalSize = Math.pow(this.size);
 
@@ -58,8 +58,6 @@ class Board {
 
         var color = (i + j) % 2 == 0 ? 'white' : 'black';
 
-        // console.log(x, y)
-
         row.push(new Square(x, y, i, j, this.squareSize, color, null, this));
       }
       this.squares.push(row);
@@ -73,7 +71,6 @@ class Board {
 
     this.initUnderAttackSquares();
 
-    // squares with pieces under attack
     this.pieceAttackSquares = [];
 
     this.moveList = new MoveList();
@@ -86,8 +83,23 @@ class Board {
     this.gameOver = false;
     this.enPassantTarget = null;
 
+    var opts = options || {};
+    var mode = opts.mode || 'bot';
+    this.isTwoPlayer = mode === '2player';
+
     this.initPieces(playerColor);
-    this.bot = new Bot(this, playerColor == Piece.WHITE ? Piece.BLACK : Piece.WHITE);
+
+    if (this.isTwoPlayer) {
+      for (let i = 0; i < this.squares.length; i++) {
+        for (let j = 0; j < this.squares[i].length; j++) {
+          var p = this.squares[i][j].piece;
+          if (p) p.playable = true;
+        }
+      }
+      this.bot = null;
+    } else {
+      this.bot = new Bot(this, playerColor === Piece.WHITE ? Piece.BLACK : Piece.WHITE);
+    }
   }
 
   initUnderAttackSquares() {
@@ -119,7 +131,7 @@ class Board {
   }
 
   update(delta) {
-    this.bot.update(delta);
+    if (this.bot) this.bot.update(delta);
 
     this.initUnderAttackSquares();
     

@@ -34,12 +34,13 @@ class Game {
     this.hud.render(g);
   }
 
-  start(canvas, orientation) {
+  start(canvas, orientation, options) {
     this.canvas = canvas;
     this.rect = this.canvas.getBoundingClientRect();
     this.ctx = canvas.getContext('2d');
     this.g = new Graphics(this.ctx);
     this.orientation = orientation;
+    this.options = options || { mode: 'bot', playerColor: 'white' };
 
     if (orientation === Game.VERTICAL_ORIENTATION) {
       this.g.setWidth(600);
@@ -75,7 +76,8 @@ class Game {
 
   loadObjects() {
     this.testAnimation = new TestAnimation();
-    this.board = new Board(Piece.WHITE);
+    var playerColor = this.options.playerColor === 'black' ? Piece.BLACK : Piece.WHITE;
+    this.board = new Board(playerColor, this.options);
     this.hud = new HUD(this.board);
   }
 

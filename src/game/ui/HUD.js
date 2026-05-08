@@ -18,11 +18,17 @@ class HUD {
 
     // players
     var playerH = this.height / 6;
-    // bot
+    // top panel (black or bot)
     g.rect(this.x, this.y, this.width, playerH, 'rgba(0, 0, 0, 0.5)');
-    // player
+    var topLabel = this.board.bot ? 'Bot (Black)' : 'Black';
+    var topFont = '16px monospace';
+    g.drawText(topLabel, this.x + 10, this.y + playerH / 2 + 5, topFont, '#aaa');
+
+    // bottom panel (white or player)
     var playerY = this.y + playerH * 5;
     g.rect(this.x, this.y + playerY, this.width, playerH, 'rgba(0, 0, 0, 0.5)');
+    var bottomLabel = this.board.isTwoPlayer ? 'White' : 'Player (White)';
+    g.drawText(bottomLabel, this.x + 10, playerY + playerH / 2 + 5, topFont, '#aaa');
 
     // move list
     var listY = this.y + playerH;

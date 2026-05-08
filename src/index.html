@@ -10,7 +10,29 @@
 </head>
 
 <body>
-  <canvas id="game-canvas"></canvas>
+  <div id="container">
+    <canvas id="game-canvas"></canvas>
+    <div id="menu-overlay">
+      <div id="menu-box">
+        <h1>♚ Chess</h1>
+        <div class="menu-row">
+          <label for="mode-select">Mode:</label>
+          <select id="mode-select">
+            <option value="bot">vs Bot</option>
+            <option value="2player">2 Players</option>
+          </select>
+        </div>
+        <div class="menu-row" id="color-row">
+          <label for="color-select">Play as:</label>
+          <select id="color-select">
+            <option value="white">White</option>
+            <option value="black">Black</option>
+          </select>
+        </div>
+        <button id="start-btn">Start Game</button>
+      </div>
+    </div>
+  </div>
   <script src="/src/game/Game.js"></script>
   <script src="/src/game/Graphics.js"></script>
   <script src="/src/game/Utils.js"></script>
@@ -30,10 +52,25 @@
   <script src="/src/game/ceng/CEngV0.js"></script>
   <script>
     var canvas = document.getElementById('game-canvas');
+    var menuOverlay = document.getElementById('menu-overlay');
+    var modeSelect = document.getElementById('mode-select');
+    var colorSelect = document.getElementById('color-select');
+    var colorRow = document.getElementById('color-row');
+    var startBtn = document.getElementById('start-btn');
 
-    var game = Game.get();
-    game.start(canvas, Game.HORIZONTAL_ORIENTATION);
-    game.run();
+    modeSelect.addEventListener('change', function() {
+      colorRow.style.display = modeSelect.value === 'bot' ? '' : 'none';
+    });
+
+    startBtn.addEventListener('click', function() {
+      menuOverlay.style.display = 'none';
+      var game = Game.get();
+      game.start(canvas, Game.HORIZONTAL_ORIENTATION, {
+        mode: modeSelect.value,
+        playerColor: colorSelect.value
+      });
+      game.run();
+    });
   </script>
 </body>
 
