@@ -104,6 +104,7 @@ class King extends Piece {
 
     this.firstMove = true;
     rook.firstMove = true;
+    this.board.enPassantTarget = null;
 
     this.board.moveList.add({
       piece: { name: this.name, color: this.color },

@@ -106,6 +106,8 @@ class Piece {
       return;
     }
 
+    this.board.enPassantTarget = null;
+
     if (!this.board.isMoveLegal(this, square)) {
       return;
     }

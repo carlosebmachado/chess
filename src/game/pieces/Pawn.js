@@ -42,9 +42,13 @@ class Pawn extends Piece {
       let square = this.board.squares[row - dir][col - dir];
       if (square) {
         this.board.underAttackSquares[Board.getListColor(this.color)].push(square);
-        if (square.piece && square.piece.color !== this.color) {
+        var canCapture = square.piece && square.piece.color !== this.color;
+        var isEnPassant = square === this.board.enPassantTarget;
+        if (canCapture || isEnPassant) {
           this.possibleMoves.push(square);
-          this.board.pieceAttackSquares.push(square);
+          if (canCapture) {
+            this.board.pieceAttackSquares.push(square);
+          }
         }
       }
     }
@@ -54,9 +58,13 @@ class Pawn extends Piece {
       let square = this.board.squares[row - dir][col + dir];
       if (square) {
         this.board.underAttackSquares[Board.getListColor(this.color)].push(square);
-        if (square.piece && square.piece.color !== this.color) {
+        var canCapture = square.piece && square.piece.color !== this.color;
+        var isEnPassant = square === this.board.enPassantTarget;
+        if (canCapture || isEnPassant) {
           this.possibleMoves.push(square);
-          this.board.pieceAttackSquares.push(square);
+          if (canCapture) {
+            this.board.pieceAttackSquares.push(square);
+          }
         }
       }
     }
@@ -69,6 +77,52 @@ class Pawn extends Piece {
         this.possibleMoves.push(square);
       }
     }
+  }
+
+  move(square) {
+    if (!square) return;
+
+    if (this.board.enPassantTarget === square) {
+      this.executeEnPassant(square);
+      return;
+    }
+
+    var fromRow = this.currentSquare.row;
+    var fromCol = this.currentSquare.col;
+    var isDoubleMove = Math.abs(square.row - fromRow) === 2 && square.col === fromCol;
+
+    super.move(square);
+
+    if (isDoubleMove) {
+      var midRow = (fromRow + square.row) / 2;
+      this.board.enPassantTarget = this.board.squares[parseInt(midRow)][square.col];
+    }
+  }
+
+  executeEnPassant(square) {
+    if (!this.board.isEnPassantLegal(this, square)) return;
+
+    var fromSquare = this.currentSquare;
+    var capturedRow = this.playable ? square.row + 1 : square.row - 1;
+    var capturedSquare = this.board.squares[capturedRow][square.col];
+
+    fromSquare.piece = null;
+    square.piece = this;
+    this.currentSquare = square;
+
+    capturedSquare.piece = null;
+
+    this.firstMove = true;
+    this.board.enPassantTarget = null;
+
+    this.board.moveList.add({
+      piece: { name: this.name, color: this.color },
+      from: { row: fromSquare.row, col: fromSquare.col },
+      to: { row: square.row, col: square.col },
+      take: true
+    });
+
+    this.board.nextTurn();
   }
 
   render(g) {

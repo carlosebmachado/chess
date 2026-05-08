@@ -84,6 +84,7 @@ class Board {
 
     this.gameState = 'normal';
     this.gameOver = false;
+    this.enPassantTarget = null;
 
     this.initPieces(playerColor);
     this.bot = new Bot(this, playerColor == Piece.WHITE ? Piece.BLACK : Piece.WHITE);
@@ -289,6 +290,10 @@ class Board {
   }
 
   isMoveLegal(piece, targetSquare) {
+    if (piece.name === 'pawn' && this.enPassantTarget === targetSquare) {
+      return this.isEnPassantLegal(piece, targetSquare);
+    }
+
     var fromSquare = piece.currentSquare;
     var capturedPiece = targetSquare.piece;
     var playerColor = piece.color;
@@ -370,6 +375,46 @@ class Board {
     rookStartSquare.piece = rook;
     rookDestSquare.piece = null;
     rook.currentSquare = rookStartSquare;
+
+    this.underAttackSquares = savedAttacks;
+    for (let [p, moves] of savedMoves) {
+      p.possibleMoves = moves;
+    }
+
+    return !inCheck;
+  }
+
+  isEnPassantLegal(pawn, targetSquare) {
+    var fromSquare = pawn.currentSquare;
+    var capturedRow = pawn.playable ? targetSquare.row + 1 : targetSquare.row - 1;
+    var capturedSquare = this.squares[capturedRow][targetSquare.col];
+    var capturedPawn = capturedSquare.piece;
+
+    var savedAttacks = [
+      [...this.underAttackSquares[0]],
+      [...this.underAttackSquares[1]]
+    ];
+    var savedMoves = new Map();
+    for (let i = 0; i < this.squares.length; i++) {
+      for (let j = 0; j < this.squares[i].length; j++) {
+        var p = this.squares[i][j].piece;
+        if (p) savedMoves.set(p, [...p.possibleMoves]);
+      }
+    }
+
+    fromSquare.piece = null;
+    targetSquare.piece = pawn;
+    pawn.currentSquare = targetSquare;
+    capturedSquare.piece = null;
+
+    this.recomputeAttacks();
+
+    var inCheck = this.isInCheck(pawn.color);
+
+    fromSquare.piece = pawn;
+    targetSquare.piece = null;
+    pawn.currentSquare = fromSquare;
+    capturedSquare.piece = capturedPawn;
 
     this.underAttackSquares = savedAttacks;
     for (let [p, moves] of savedMoves) {

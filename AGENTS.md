@@ -64,7 +64,7 @@ Each component owns its state and renders itself via `render(g)` where `g` is a 
 - `addNormalMovement(row, col)` and `findContinuousMovements(rowDir, colDir)` are shared helpers in `Piece.js`
 - Each piece implements `calcMoves()` for pure move computation (extracted from `update()` for simulation use)
 - Turn switching: `board.nextTurn()`
-- No en passant or pawn promotion implemented yet
+- No pawn promotion implemented yet
 
 ## Game State & Check/Checkmate
 - `Board.gameState`: `'normal'` | `'check'` | `'checkmate'` | `'stalemate'`
@@ -87,6 +87,14 @@ Each component owns its state and renders itself via `render(g)` where `g` is a 
   - King must not pass through a square under attack
   - King must not end up in check (verified by `isCastlingLegal` which simulates the full king+rook move and recomputes all attacks)
 - King's `move()` is overridden: a 2-square column difference triggers `executeCastling` which moves both king and rook, sets both `firstMove` flags, and records the move
+
+## En Passant
+- Implemented in `Pawn.js` (`move`, `executeEnPassant`) and `Board.js` (`isEnPassantLegal`)
+- A pawn that double-advances creates an en passant target square (the square it passed through)
+- The target is stored in `Board.enPassantTarget` and expires after one move (cleared at the start of any subsequent move)
+- Opposing pawns on adjacent files can capture en passant — the capture square is added to `possibleMoves` in `findMovements`
+- Legality is verified by `isEnPassantLegal` which simulates both the pawn move and the captured pawn removal
+- Move list records en passant as a capture (`take: true`)
 
 ## Testing
 No test framework is currently configured. If adding tests, put them in a `tests/` directory.
