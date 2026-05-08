@@ -18,11 +18,13 @@ class Pawn extends Piece {
   }
 
   calcMoves() {
-    if (this.playable) {
-      this.findMovements(1);
+    var dir;
+    if (this.board.isTwoPlayer) {
+      dir = this.color === Piece.WHITE ? 1 : -1;
     } else {
-      this.findMovements(-1);
+      dir = this.playable ? 1 : -1;
     }
+    this.findMovements(dir);
   }
 
   findMovements(dir) {
@@ -106,7 +108,12 @@ class Pawn extends Piece {
     if (!this.board.isEnPassantLegal(this, square)) return;
 
     var fromSquare = this.currentSquare;
-    var capturedRow = this.playable ? square.row + 1 : square.row - 1;
+    var capturedRow;
+    if (this.board.isTwoPlayer) {
+      capturedRow = this.color === Piece.WHITE ? square.row + 1 : square.row - 1;
+    } else {
+      capturedRow = this.playable ? square.row + 1 : square.row - 1;
+    }
     var capturedSquare = this.board.squares[capturedRow][square.col];
 
     fromSquare.piece = null;
