@@ -28,7 +28,7 @@ class Square {
       g.circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 4, 'red');
     }
 
-    this.drawDebug(g);
+    if (Game.debug) this.drawDebug(g);
   }
 
   drawDebug(g) {

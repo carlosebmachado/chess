@@ -1,4 +1,5 @@
 class Game {
+  static debug = false;
   static VERTICAL_ORIENTATION = 'vertical';
   static HORIZONTAL_ORIENTATION = 'horizontal';
 
@@ -21,7 +22,7 @@ class Game {
   }
 
   update(delta) {
-    this.testAnimation.update(delta);
+    if (Game.debug) this.testAnimation.update(delta);
     this.board.update(delta);
     this.hud.update(delta);
   }
@@ -29,9 +30,8 @@ class Game {
   render(g) {
     g.clear();
 
-    this.testAnimation.render(g);
+    if (Game.debug) this.testAnimation.render(g);
     this.board.render(g);
-    this.hud.render(g);
   }
 
   start(canvas, orientation, options) {
@@ -39,16 +39,11 @@ class Game {
     this.rect = this.canvas.getBoundingClientRect();
     this.ctx = canvas.getContext('2d');
     this.g = new Graphics(this.ctx);
-    this.orientation = orientation;
-    this.options = options || { mode: 'bot', playerColor: 'white' };
+    this.options = options || {};
 
-    if (orientation === Game.VERTICAL_ORIENTATION) {
-      this.g.setWidth(600);
-      this.g.setHeight(800);
-    } else {
-      this.g.setWidth(800);
-      this.g.setHeight(600);
-    }
+    var size = 600;
+    this.g.setWidth(size);
+    this.g.setHeight(size);
 
     this.mousePosX = 0;
     this.mousePosY = 0;
@@ -75,7 +70,7 @@ class Game {
   }
 
   loadObjects() {
-    this.testAnimation = new TestAnimation();
+    if (Game.debug) this.testAnimation = new TestAnimation();
     var playerColor = this.options.playerColor === 'black' ? Piece.BLACK : Piece.WHITE;
     this.board = new Board(playerColor, this.options);
     this.hud = new HUD(this.board);
@@ -95,8 +90,6 @@ class Game {
   }
 
   handleTouchStart = (e) => {
-    // this.touchPosX = e.touches[0].clientX - this.rect.left;
-    // this.touchPosY = e.touches[0].clientY - this.rect.top;
     this.touchPosX = e.touches[0].clientX;
     this.touchPosY = e.touches[0].clientY;
 
@@ -106,8 +99,6 @@ class Game {
     this.isTouching = true;
     this.isPushing = true;
 
-    // console.log(`tocou em ${this.touchPosX}:${this.touchPosY}`);
-
     e.preventDefault();
   }
 
@@ -115,21 +106,15 @@ class Game {
     this.isTouching = false
     this.isPushing = false;
 
-    // console.log(`destocou em ${this.touchPosX}:${this.touchPosY}`);
-
     e.preventDefault();
   }
 
   handleTouchMove = (e) => {
-    // this.touchPosX = e.touches[0].clientX - this.rect.left;
-    // this.touchPosX = e.touches[0].clientY - this.rect.top;
     this.touchPosX = e.touches[0].clientX;
     this.touchPosY = e.touches[0].clientY;
 
     this.pushPosX = this.touchPosX;
     this.pushPosY = this.touchPosY;
-
-    // console.log(`moveu toque para ${this.touchPosX}:${this.touchPosY}`);
 
     e.preventDefault();
   }
@@ -138,13 +123,11 @@ class Game {
     this.isClicking = true;
     this.isPushing = true;
     
-    this.clickPosX = this.mousePosX;
-    this.clickPosY = this.mousePosY;
+    this.clickPosX = e.offsetX;
+    this.clickPosY = e.offsetY;
 
-    this.pushPosX = this.mousePosX;
-    this.pushPosY = this.mousePosY;
-
-    // console.log(`clicou em ${this.mousePosX}:${this.mousePosY}`);
+    this.pushPosX = e.offsetX;
+    this.pushPosY = e.offsetY;
 
     e.preventDefault();
   }
@@ -152,8 +135,6 @@ class Game {
   handleMouseUp = (e) => {
     this.isClicking = false;
     this.isPushing = false;
-
-    // console.log(`desclicou em ${this.mousePosX}:${this.mousePosY}`);
 
     e.preventDefault();
   }
@@ -165,12 +146,13 @@ class Game {
     this.pushPosX = this.mousePosX;
     this.pushPosY = this.mousePosY;
 
-    // console.log(`moveu mouse para ${this.mousePosX}:${this.mousePosY}`);
-
     e.preventDefault();
   }
 
   handleKeyDown = (e) => {
+    if (e.key === 'd' || e.key === 'D') {
+      Game.debug = !Game.debug;
+    }
 
     e.preventDefault();
   }

@@ -1,69 +1,81 @@
 class HUD {
   constructor(board) {
-    var boardSize = board.size * board.squareSize;
-    this.x = boardSize;
-    this.y = 0;
-    this.width = Game.get().g.getWidth() - boardSize;
-    this.height = boardSize;
     this.board = board;
+    this.topLabel = document.getElementById('top-label');
+    this.bottomLabel = document.getElementById('bottom-label');
+    this.topPanel = document.getElementById('top-panel');
+    this.bottomPanel = document.getElementById('bottom-panel');
+    this.moveListEl = document.getElementById('move-list');
+    this.gameStateEl = document.getElementById('game-state');
   }
 
   update(delta) {
+    var turnIsWhite = this.board.turn === Piece.WHITE;
+    var playerIsWhite = this.board.playerColor === Piece.WHITE;
 
+    if (this.board.bot) {
+      this.topLabel.textContent = 'Bot';
+      this.bottomLabel.textContent = playerIsWhite ? 'White' : 'Black';
+    } else {
+      this.topLabel.textContent = playerIsWhite ? 'Black' : 'White';
+      this.bottomLabel.textContent = playerIsWhite ? 'White' : 'Black';
+    }
+
+    this.topPanel.classList.toggle('active', !turnIsWhite);
+    this.bottomPanel.classList.toggle('active', turnIsWhite);
+
+    var moves = this.board.moveList;
+    var html = '';
+    var lineCount = 1;
+    for (let i = 0; i < moves.length; i += 2) {
+      var whiteText = this.formatMove(moves.get(i));
+      var blackText = i + 1 < moves.length ? this.formatMove(moves.get(i + 1)) : '';
+
+      html += '<div class="move-row">' +
+        '<span class="move-num">' + lineCount + '.</span>' +
+        '<span class="move-white">' + this.escapeHtml(whiteText) + '</span>' +
+        '<span class="move-black">' + this.escapeHtml(blackText) + '</span>' +
+        '</div>';
+      lineCount++;
+    }
+    this.moveListEl.innerHTML = html;
+    this.moveListEl.scrollTop = this.moveListEl.scrollHeight;
+
+    if (this.board.gameState === 'check') {
+      this.gameStateEl.textContent = 'Check!';
+      this.gameStateEl.style.color = '#f0d060';
+    } else if (this.board.gameState === 'checkmate') {
+      this.gameStateEl.textContent = 'Checkmate!';
+      this.gameStateEl.style.color = '#e06060';
+    } else if (this.board.gameState === 'stalemate') {
+      this.gameStateEl.textContent = 'Stalemate!';
+      this.gameStateEl.style.color = '#909090';
+    } else if (this.board.gameState === 'draw') {
+      this.gameStateEl.textContent = 'Draw! (' + this.board.drawReason + ')';
+      this.gameStateEl.style.color = '#909090';
+    } else {
+      this.gameStateEl.textContent = '';
+    }
+  }
+
+  formatMove(move) {
+    if (!move) return '';
+
+    var isCastling = move.piece.name === 'king' && Math.abs(move.to.col - move.from.col) === 2;
+    if (isCastling) {
+      return move.to.col > move.from.col ? 'O-O' : 'O-O-O';
+    }
+
+    var piece = move.piece.name === 'pawn' ? '' : MoveList.PIECES[move.piece.color[0]][move.piece.name[0]];
+    var to = Board.CNAME[move.to.col] + Board.RNAME[move.to.row];
+    var promo = move.promotion ? '=' + move.promotion[0].toUpperCase() : '';
+    return piece + (move.take ? 'x' : '') + to + promo;
+  }
+
+  escapeHtml(str) {
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   }
 
   render(g) {
-    // background
-    g.rect(this.x, this.y, this.width, this.height, 'rgba(0, 0, 0, 0.5)');
-
-    // players
-    var playerH = this.height / 6;
-    // top panel (black or bot)
-    g.rect(this.x, this.y, this.width, playerH, 'rgba(0, 0, 0, 0.5)');
-    var topLabel = this.board.bot ? 'Bot (Black)' : 'Black';
-    var topFont = '16px monospace';
-    g.drawText(topLabel, this.x + 10, this.y + playerH / 2 + 5, topFont, '#aaa');
-
-    // bottom panel (white or player)
-    var playerY = this.y + playerH * 5;
-    g.rect(this.x, this.y + playerY, this.width, playerH, 'rgba(0, 0, 0, 0.5)');
-    var bottomLabel = this.board.isTwoPlayer ? 'White' : 'Player (White)';
-    g.drawText(bottomLabel, this.x + 10, playerY + playerH / 2 + 5, topFont, '#aaa');
-
-    // move list
-    var listY = this.y + playerH;
-    g.rect(this.x, listY, this.width, listY * 4, 'rgba(100, 0, 0, 0.5)');
-    var titleText = '  White   Black';
-    var lines = this.board.moveList.toString().split('\n');
-    var spaceCount = parseInt(this.board.moveList.length / 2).toString().length + titleText.length;
-    var printLines = lines.slice(-15);
-    var font = '15px monospace';
-    var color = 'white';
-    var tPad = 25;
-    g.drawText(titleText.padStart(spaceCount, ' '), this.x + 10, listY + tPad, font, color);
-    for (let i = 0; i < printLines.length; ++i) {
-      g.drawText(printLines[i], this.x + 10, listY + tPad * (i + 2), font, color);
-    }
-
-    // game state
-    if (this.board.gameState !== 'normal') {
-      var stateFont = '20px monospace';
-      var stateY = playerY + playerH / 2;
-      var stateText = '';
-      if (this.board.gameState === 'check') {
-        stateText = 'Check!';
-        g.drawText(stateText, this.x + 10, stateY, stateFont, 'yellow');
-      } else if (this.board.gameState === 'checkmate') {
-        stateText = 'Checkmate!';
-        g.drawText(stateText, this.x + 10, stateY, stateFont, 'red');
-      } else if (this.board.gameState === 'stalemate') {
-        stateText = 'Stalemate!';
-        g.drawText(stateText, this.x + 10, stateY, stateFont, 'gray');
-      } else if (this.board.gameState === 'draw') {
-        stateText = 'Draw!';
-        g.drawText(stateText, this.x + 10, stateY, stateFont, 'gray');
-        g.drawText(`(${this.board.drawReason})`, this.x + 10, stateY + 22, '12px monospace', 'gray');
-      }
-    }
   }
 }

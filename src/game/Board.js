@@ -89,6 +89,8 @@ class Board {
     this.positionHistory = [];
     this.drawReason = null;
 
+    this.playerColor = playerColor;
+
     var opts = options || {};
     var mode = opts.mode || 'bot';
     this.isTwoPlayer = mode === '2player';

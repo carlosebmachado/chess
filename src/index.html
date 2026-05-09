@@ -12,18 +12,33 @@
 <body>
   <div id="container">
     <canvas id="game-canvas"></canvas>
+    <div id="sidebar">
+      <div id="top-panel" class="player-panel">
+        <span class="player-dot"></span>
+        <span id="top-label">Black</span>
+      </div>
+      <div id="move-list-container">
+        <div id="move-list-header"><span>White</span><span>Black</span></div>
+        <div id="move-list"></div>
+      </div>
+      <div id="game-state"></div>
+      <div id="bottom-panel" class="player-panel">
+        <span class="player-dot"></span>
+        <span id="bottom-label">White</span>
+      </div>
+    </div>
     <div id="menu-overlay">
       <div id="menu-box">
         <h1>♚ Chess</h1>
         <div class="menu-row">
-          <label for="mode-select">Mode:</label>
+          <label for="mode-select">Mode</label>
           <select id="mode-select">
             <option value="bot">vs Bot</option>
             <option value="2player">2 Players</option>
           </select>
         </div>
         <div class="menu-row" id="color-row">
-          <label for="color-select">Play as:</label>
+          <label for="color-select">Play as</label>
           <select id="color-select">
             <option value="white">White</option>
             <option value="black">Black</option>
