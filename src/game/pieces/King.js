@@ -33,11 +33,18 @@ class King extends Piece {
 
         var movSquare = this.board.squares[calcRow][calcCol];
 
+        this.board.addUnderAttackSquare(movSquare, this.color);
+
         if (this.board.underAttackSquares[Board.getInverseListColor(this.color)].includes(movSquare)) {
           continue;
         }
 
-        this.addNormalMovement(calcRow, calcCol);
+        if (movSquare.piece && movSquare.piece.color === this.color) continue;
+
+        this.possibleMoves.push(movSquare);
+        if (movSquare.piece && movSquare.piece.color !== this.color) {
+          this.board.addPieceAttackSquare(movSquare);
+        }
       }
     }
 
