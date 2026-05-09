@@ -59,6 +59,10 @@ class HUD {
       } else if (this.board.gameState === 'stalemate') {
         stateText = 'Stalemate!';
         g.drawText(stateText, this.x + 10, stateY, stateFont, 'gray');
+      } else if (this.board.gameState === 'draw') {
+        stateText = 'Draw!';
+        g.drawText(stateText, this.x + 10, stateY, stateFont, 'gray');
+        g.drawText(`(${this.board.drawReason})`, this.x + 10, stateY + 22, '12px monospace', 'gray');
       }
     }
   }

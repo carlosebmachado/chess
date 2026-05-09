@@ -85,11 +85,17 @@ class Board {
     this.promotionChoices = [];
     this.wasPromotionPushing = false;
 
+    this.halfMoveClock = 0;
+    this.positionHistory = [];
+    this.drawReason = null;
+
     var opts = options || {};
     var mode = opts.mode || 'bot';
     this.isTwoPlayer = mode === '2player';
 
     this.initPieces(playerColor);
+
+    this.recordPosition();
 
     if (this.isTwoPlayer) {
       for (let i = 0; i < this.squares.length; i++) {
@@ -219,6 +225,7 @@ class Board {
 
   nextTurn() {
     this.turn = this.turn === Piece.WHITE ? Piece.BLACK : Piece.WHITE;
+    this.recordPosition();
   }
 
   initPieces(color) {
@@ -460,6 +467,106 @@ class Board {
     return false;
   }
 
+  getPositionKey() {
+    var key = '';
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        var p = this.squares[i][j].piece;
+        if (p) {
+          key += p.color[0] + p.name[0];
+        } else {
+          key += '..';
+        }
+      }
+    }
+    key += this.turn[0];
+    key += this.getCastlingKey();
+    key += this.enPassantTarget ? this.enPassantTarget.row + ',' + this.enPassantTarget.col : '--';
+    return key;
+  }
+
+  getCastlingKey() {
+    var key = '';
+    var wKing = this.squares[7][4].piece;
+    var bKing = this.squares[0][4].piece;
+
+    var wr = this.squares[7][7].piece;
+    key += (wKing && wKing.name === 'king' && wKing.color === Piece.WHITE && !wKing.firstMove &&
+            wr && wr.name === 'rook' && wr.color === Piece.WHITE && !wr.firstMove) ? 'K' : '-';
+
+    wr = this.squares[7][0].piece;
+    key += (wKing && wKing.name === 'king' && wKing.color === Piece.WHITE && !wKing.firstMove &&
+            wr && wr.name === 'rook' && wr.color === Piece.WHITE && !wr.firstMove) ? 'Q' : '-';
+
+    wr = this.squares[0][7].piece;
+    key += (bKing && bKing.name === 'king' && bKing.color === Piece.BLACK && !bKing.firstMove &&
+            wr && wr.name === 'rook' && wr.color === Piece.BLACK && !wr.firstMove) ? 'k' : '-';
+
+    wr = this.squares[0][0].piece;
+    key += (bKing && bKing.name === 'king' && bKing.color === Piece.BLACK && !bKing.firstMove &&
+            wr && wr.name === 'rook' && wr.color === Piece.BLACK && !wr.firstMove) ? 'q' : '-';
+
+    return key;
+  }
+
+  recordPosition() {
+    var key = this.getPositionKey();
+    this.positionHistory.push(key);
+  }
+
+  isThreefoldRepetition() {
+    if (this.positionHistory.length < 5) return false;
+    var last = this.positionHistory[this.positionHistory.length - 1];
+    var count = 0;
+    for (let i = 0; i < this.positionHistory.length; i++) {
+      if (this.positionHistory[i] === last) count++;
+    }
+    return count >= 3;
+  }
+
+  isFiftyMoveDraw() {
+    return this.halfMoveClock >= 100;
+  }
+
+  hasInsufficientMaterial() {
+    var wNonKing = [];
+    var bNonKing = [];
+
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        var p = this.squares[i][j].piece;
+        if (p && p.name !== 'king') {
+          if (p.color === Piece.WHITE) {
+            wNonKing.push(p);
+          } else {
+            bNonKing.push(p);
+          }
+        }
+      }
+    }
+
+    if (wNonKing.length === 0 && bNonKing.length === 0) return true;
+
+    if (wNonKing.length === 1 && bNonKing.length === 0) {
+      if (wNonKing[0].name === 'bishop' || wNonKing[0].name === 'knight') return true;
+    }
+    if (wNonKing.length === 0 && bNonKing.length === 1) {
+      if (bNonKing[0].name === 'bishop' || bNonKing[0].name === 'knight') return true;
+    }
+
+    if (wNonKing.length === 1 && bNonKing.length === 1) {
+      if (wNonKing[0].name === 'bishop' && bNonKing[0].name === 'bishop') {
+        var wSq = wNonKing[0].currentSquare;
+        var bSq = bNonKing[0].currentSquare;
+        if (wSq && bSq) {
+          if ((wSq.row + wSq.col) % 2 === (bSq.row + bSq.col) % 2) return true;
+        }
+      }
+    }
+
+    return false;
+  }
+
   checkGameState() {
     if (this.gameOver) return;
 
@@ -477,6 +584,22 @@ class Board {
       this.gameState = 'check';
     } else {
       this.gameState = 'normal';
+    }
+
+    if (!this.gameOver) {
+      if (this.isThreefoldRepetition()) {
+        this.gameState = 'draw';
+        this.drawReason = 'Threefold Repetition';
+        this.gameOver = true;
+      } else if (this.isFiftyMoveDraw()) {
+        this.gameState = 'draw';
+        this.drawReason = 'Fifty-Move Rule';
+        this.gameOver = true;
+      } else if (this.hasInsufficientMaterial()) {
+        this.gameState = 'draw';
+        this.drawReason = 'Insufficient Material';
+        this.gameOver = true;
+      }
     }
   }
 
@@ -528,6 +651,7 @@ class Board {
       promotion: choice
     });
 
+    this.halfMoveClock = 0;
     this.promotionPending = null;
     this.promotionChoices = [];
     this.nextTurn();

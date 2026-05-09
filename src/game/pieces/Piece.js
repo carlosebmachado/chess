@@ -141,6 +141,12 @@ class Piece {
 
     this.executeMoveEvents();
 
+    if (this.name === 'pawn' || pieceTaken) {
+      this.board.halfMoveClock = 0;
+    } else {
+      this.board.halfMoveClock++;
+    }
+
     this.board.nextTurn();
   }
 
