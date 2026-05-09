@@ -36,14 +36,14 @@ class Game {
 
   start(canvas, orientation, options) {
     this.canvas = canvas;
-    this.rect = this.canvas.getBoundingClientRect();
     this.ctx = canvas.getContext('2d');
     this.g = new Graphics(this.ctx);
     this.options = options || {};
 
-    var size = 600;
-    this.g.setWidth(size);
-    this.g.setHeight(size);
+    this.container = canvas.parentElement;
+    this.wrapper = this.container.parentElement;
+
+    this.resize();
 
     this.mousePosX = 0;
     this.mousePosY = 0;
@@ -63,11 +63,46 @@ class Game {
     this.running = true;
     this.loadObjects();
     this.loadEvents();
+
+    if (this.wrapper) {
+      this.resizeObserver = new ResizeObserver(() => this.resize());
+      this.resizeObserver.observe(this.wrapper);
+    }
+  }
+
+  resize() {
+    if (!this.wrapper) return;
+    var availW = this.wrapper.clientWidth;
+    var availH = this.wrapper.clientHeight;
+    if (availW === 0 || availH === 0) return;
+
+    var sidebarRatio = 230 / 600;
+    var boardSize = Math.min(availH, Math.floor(availW / (1 + sidebarRatio)));
+    boardSize = Math.max(boardSize, 100);
+    var sidebarWidth = Math.floor(boardSize * sidebarRatio);
+
+    this.canvas.width = boardSize;
+    this.canvas.height = boardSize;
+    this.rect = this.canvas.getBoundingClientRect();
+    this.g.setWidth(boardSize);
+    this.g.setHeight(boardSize);
+
+    var sidebar = document.getElementById('sidebar');
+    if (sidebar) {
+      sidebar.style.width = sidebarWidth + 'px';
+    }
+
+    if (this.board) {
+      this.board.resize(boardSize, boardSize);
+    }
   }
 
   stop() {
     this.running = false;
     clearInterval(this.interval);
+    if (this.resizeObserver) {
+      this.resizeObserver.disconnect();
+    }
   }
 
   loadObjects() {

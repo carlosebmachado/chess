@@ -323,6 +323,21 @@ class Board {
     return row >= 0 && row < this.size && col >= 0 && col < this.size;
   }
 
+  resize(width, height) {
+    this.squareSize = Math.min(width, height) / this.size;
+    for (let i = 0; i < this.size; i++) {
+      for (let j = 0; j < this.size; j++) {
+        var sq = this.squares[i][j];
+        sq.x = j * this.squareSize;
+        sq.y = i * this.squareSize;
+        sq.size = this.squareSize;
+        if (sq.piece) {
+          sq.piece.squareSize = this.squareSize;
+        }
+      }
+    }
+  }
+
   nextTurn() {
     this.selectedPiece = null;
     this.turn = this.turn === Piece.WHITE ? Piece.BLACK : Piece.WHITE;

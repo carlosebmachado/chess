@@ -28,25 +28,25 @@
         <span id="bottom-label">White</span>
       </div>
     </div>
-    <div id="menu-overlay">
-      <div id="menu-box">
-        <h1>♚ Chess</h1>
-        <div class="menu-row">
-          <label for="mode-select">Mode</label>
-          <select id="mode-select">
-            <option value="bot">vs Bot</option>
-            <option value="2player">2 Players</option>
-          </select>
-        </div>
-        <div class="menu-row" id="color-row">
-          <label for="color-select">Play as</label>
-          <select id="color-select">
-            <option value="white">White</option>
-            <option value="black">Black</option>
-          </select>
-        </div>
-        <button id="start-btn">Start Game</button>
+  </div>
+  <div id="menu-overlay">
+    <div id="menu-box">
+      <h1>♚ Chess</h1>
+      <div class="menu-row">
+        <label for="mode-select">Mode</label>
+        <select id="mode-select">
+          <option value="bot">vs Bot</option>
+          <option value="2player">2 Players</option>
+        </select>
       </div>
+      <div class="menu-row" id="color-row">
+        <label for="color-select">Play as</label>
+        <select id="color-select">
+          <option value="white">White</option>
+          <option value="black">Black</option>
+        </select>
+      </div>
+      <button id="start-btn">Start Game</button>
     </div>
   </div>
   <script src="/src/game/Game.js"></script>
@@ -68,6 +68,7 @@
   <script src="/src/game/ceng/CEngV0.js"></script>
   <script>
     var canvas = document.getElementById('game-canvas');
+    var sidebar = document.getElementById('sidebar');
     var menuOverlay = document.getElementById('menu-overlay');
     var modeSelect = document.getElementById('mode-select');
     var colorSelect = document.getElementById('color-select');
@@ -80,6 +81,8 @@
 
     startBtn.addEventListener('click', function() {
       menuOverlay.style.display = 'none';
+      canvas.style.display = 'block';
+      sidebar.style.display = 'flex'
       var game = Game.get();
       game.start(canvas, Game.HORIZONTAL_ORIENTATION, {
         mode: modeSelect.value,
