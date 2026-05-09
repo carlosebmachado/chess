@@ -54,18 +54,22 @@ class MoveList {
     var str = '';
     var lineCount = 1;
     var spaceCount = parseInt(this.moves.length / 2).toString().length;
-    // console.log(spaceCount);
     for (let i = 0; i < this.moves.length; ++i) {
       var move = this.moves[i];
 
-      // console.log(move);
+      var isCastling = move.piece.name === 'king' && Math.abs(move.to.col - move.from.col) === 2;
 
-      var piece = MoveList.PIECES[move.piece.color[0]][move.piece.name[0]];
-      var to = Board.RNAME[move.to.row] + Board.CNAME[move.to.col];
+      var moveText;
+      if (isCastling) {
+        moveText = move.to.col > move.from.col ? 'O-O' : 'O-O-O';
+      } else {
+        var piece = move.piece.name === 'pawn' ? '' : MoveList.PIECES[move.piece.color[0]][move.piece.name[0]];
+        var to = Board.CNAME[move.to.col] + Board.RNAME[move.to.row];
+        var promo = move.promotion ? `=${move.promotion[0].toUpperCase()}` : '';
+        moveText = `${piece}${move.take ? 'x' : ''}${to}${promo}`;
+      }
+      if (!move.take && !isCastling) moveText += ' ';
 
-      var promo = move.promotion ? `=${move.promotion[0].toUpperCase()}` : '';
-      var moveText = `${piece}${move.take ? 'x' : ''}${to}${promo}`;
-      if (!move.take) moveText += ' ';
       if (i % 2 === 0) {
         str += `${lineCount.toString().padStart(spaceCount, ' ')}. ${moveText}   `;
         lineCount++;
@@ -74,7 +78,6 @@ class MoveList {
       }
     }
 
-    // console.log(str);
     if (str[str.length - 1] !== '\n') {
       str += '\n';
     }
