@@ -8,6 +8,6 @@
 - [X] Add flag to enable/disable debug interface items
 - [ ] QoL:
   - [X] Improve movement list (add the possibility to scroll it, or maybe even bring it to HTML?). Also, improve the general interface of movement list and start interface, make it more readable and beautiful.
+  - [X] Adds numbers to left squares and letter to botton squares.
   - [ ] Implement undo move.
-  - [ ] Adds numbers to left squares and letter to botton squares to help.
 - [ ] Move to a React.js project

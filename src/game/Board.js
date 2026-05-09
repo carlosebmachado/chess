@@ -183,6 +183,7 @@ class Board {
 
   render(g) {
     this.renderBoard(g);
+    this.renderLabels(g);
     this.renderPieces(g);
     this.renderPromotionUI(g);
   }
@@ -200,6 +201,29 @@ class Board {
     if (this.currentHolding) {
       this.currentHolding.currentSquare.render(g);
     }
+  }
+
+  renderLabels(g) {
+    var labelColor = 'rgba(0, 0, 0, 0.25)';
+    var font = '13px sans-serif';
+    var pad = 5;
+
+    g.ctx.textBaseline = 'top';
+    g.ctx.textAlign = 'left';
+    for (let i = 0; i < 8; i++) {
+      var sq = this.squares[i][0];
+      g.drawText(Board.RNAME[i], sq.x + pad, sq.y + pad, font, labelColor);
+    }
+
+    g.ctx.textBaseline = 'bottom';
+    g.ctx.textAlign = 'right';
+    for (let j = 0; j < 8; j++) {
+      var sq = this.squares[7][j];
+      g.drawText(Board.CNAME[j], sq.x + this.squareSize - pad, sq.y + this.squareSize - pad, font, labelColor);
+    }
+
+    g.ctx.textBaseline = 'alphabetic';
+    g.ctx.textAlign = 'start';
   }
 
   renderPieces(g) {
