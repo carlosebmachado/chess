@@ -18,7 +18,7 @@ class Pawn extends Piece {
   }
 
   calcMoves() {
-    var dir = this.color === Piece.WHITE ? 1 : -1;
+    var dir = this.color === this.board.playerColor ? 1 : -1;
     this.findMovements(dir);
   }
 
@@ -91,7 +91,7 @@ class Pawn extends Piece {
     var fromCol = this.currentSquare.col;
     var isDoubleMove = Math.abs(square.row - fromRow) === 2 && square.col === fromCol;
 
-    var dir = this.color === Piece.WHITE ? 1 : -1;
+    var dir = this.color === this.board.playerColor ? 1 : -1;
     var isPromotion = (dir > 0 && square.row === Board.L8) || (dir < 0 && square.row === Board.L1);
 
     if (isPromotion) {
@@ -135,7 +135,7 @@ class Pawn extends Piece {
     if (!this.board.isEnPassantLegal(this, square)) return;
 
     var fromSquare = this.currentSquare;
-    var dir = this.color === Piece.WHITE ? 1 : -1;
+    var dir = this.color === this.board.playerColor ? 1 : -1;
     var capturedRow = dir > 0 ? square.row + 1 : square.row - 1;
     var capturedSquare = this.board.squares[capturedRow][square.col];
 
