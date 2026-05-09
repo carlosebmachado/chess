@@ -12,6 +12,7 @@ class Square {
     this.piece = piece;
     this.board = board;
     this.highlight = false;
+    this.marked = false;
   }
 
   update(delta) {
@@ -44,6 +45,10 @@ class Square {
 
     if (this.highlight) {
       g.circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 5, 'rgba(0, 0, 0, 0.25)');
+    }
+
+    if (this.marked) {
+      g.rect(this.x, this.y, this.size, this.size, 'rgba(0, 200, 0, 0.25)');
     }
 
     if (Game.debug) this.drawDebug(g);

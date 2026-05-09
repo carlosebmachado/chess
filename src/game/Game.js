@@ -79,6 +79,7 @@ class Game {
 
   loadEvents() {
     this.canvas.addEventListener("mousedown", this.handleMouseDown);
+    this.canvas.addEventListener("contextmenu", this.handleContextMenu);
     this.canvas.addEventListener("mouseup", this.handleMouseUp);
     this.canvas.addEventListener("mousemove", this.handleMouseMove);
 
@@ -139,7 +140,17 @@ class Game {
     e.preventDefault();
   }
 
+  handleContextMenu = (e) => {
+    e.preventDefault();
+    var col = Math.floor(e.offsetX / this.board.squareSize);
+    var row = Math.floor(e.offsetY / this.board.squareSize);
+    if (this.board.inBoardLimit(row, col)) {
+      this.board.squares[row][col].marked = !this.board.squares[row][col].marked;
+    }
+  }
+
   handleMouseDown = (e) => {
+    if (e.button !== 0) return;
     this.isClicking = true;
     this.isPushing = true;
     
