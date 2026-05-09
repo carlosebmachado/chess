@@ -153,6 +153,14 @@ class Game {
     if (e.key === 'd' || e.key === 'D') {
       Game.debug = !Game.debug;
     }
+    if (e.key === 'z' || e.key === 'Z') {
+      if (this.board) {
+        this.board.undoLastMove();
+        if (this.board.bot && this.board.turn !== this.board.playerColor) {
+          this.board.undoLastMove();
+        }
+      }
+    }
 
     e.preventDefault();
   }

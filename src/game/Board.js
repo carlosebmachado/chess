@@ -88,6 +88,7 @@ class Board {
     this.halfMoveClock = 0;
     this.positionHistory = [];
     this.drawReason = null;
+    this.undoStack = [];
 
     this.playerColor = playerColor;
 
@@ -627,6 +628,82 @@ class Board {
         this.gameOver = true;
       }
     }
+  }
+
+  undoLastMove() {
+    if (this.undoStack.length === 0) return false;
+    if (this.promotionPending) return false;
+
+    var state = this.undoStack.pop();
+
+    if (this.moveList.length > 0) {
+      this.moveList.moves.pop();
+    }
+
+    this.halfMoveClock = state.halfMoveClock;
+    this.enPassantTarget = state.enPassantTarget;
+    this.gameState = state.gameState;
+    this.gameOver = state.gameOver;
+    this.drawReason = state.drawReason;
+
+    if (this.positionHistory.length > 0) {
+      this.positionHistory.pop();
+    }
+
+    switch (state.type) {
+      case 'normal':
+      case 'capture': {
+        var piece = this.squares[state.toRow][state.toCol].piece;
+        this.squares[state.fromRow][state.fromCol].piece = piece;
+        piece.currentSquare = this.squares[state.fromRow][state.fromCol];
+        piece.firstMove = state.pieceFirstMove;
+        this.squares[state.toRow][state.toCol].piece = state.capturedPiece;
+        if (state.capturedPiece) {
+          state.capturedPiece.currentSquare = this.squares[state.toRow][state.toCol];
+        }
+        break;
+      }
+      case 'enpassant': {
+        var epPiece = this.squares[state.toRow][state.toCol].piece;
+        this.squares[state.fromRow][state.fromCol].piece = epPiece;
+        epPiece.currentSquare = this.squares[state.fromRow][state.fromCol];
+        epPiece.firstMove = state.pieceFirstMove;
+        this.squares[state.toRow][state.toCol].piece = null;
+        this.squares[state.epCapturedRow][state.epCapturedCol].piece = state.epCapturedPiece;
+        if (state.epCapturedPiece) {
+          state.epCapturedPiece.currentSquare = this.squares[state.epCapturedRow][state.epCapturedCol];
+        }
+        break;
+      }
+      case 'castling': {
+        var king = this.squares[state.toRow][state.toCol].piece;
+        this.squares[state.fromRow][state.fromCol].piece = king;
+        king.currentSquare = this.squares[state.fromRow][state.fromCol];
+        king.firstMove = state.kingFirstMove;
+        this.squares[state.toRow][state.toCol].piece = null;
+
+        var rook = this.squares[state.rookToRow][state.rookToCol].piece;
+        this.squares[state.rookFromRow][state.rookFromCol].piece = rook;
+        rook.currentSquare = this.squares[state.rookFromRow][state.rookFromCol];
+        rook.firstMove = state.rookFirstMove;
+        this.squares[state.rookToRow][state.rookToCol].piece = null;
+        break;
+      }
+      case 'promotion': {
+        this.squares[state.toRow][state.toCol].piece = state.capturedPiece;
+        if (state.capturedPiece) {
+          state.capturedPiece.currentSquare = this.squares[state.toRow][state.toCol];
+        }
+        var pawn = state.pawn;
+        this.squares[state.fromRow][state.fromCol].piece = pawn;
+        pawn.currentSquare = this.squares[state.fromRow][state.fromCol];
+        pawn.firstMove = state.pieceFirstMove;
+        break;
+      }
+    }
+
+    this.turn = this.turn === Piece.WHITE ? Piece.BLACK : Piece.WHITE;
+    return true;
   }
 
   checkPromotionClick() {

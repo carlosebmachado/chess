@@ -95,11 +95,28 @@ class Pawn extends Piece {
     var isPromotion = (dir > 0 && square.row === Board.L8) || (dir < 0 && square.row === Board.L1);
 
     if (isPromotion) {
+      var savedEnPassant = this.board.enPassantTarget;
       this.board.enPassantTarget = null;
       if (!this.board.isMoveLegal(this, square)) return;
 
       var fromSquare = this.currentSquare;
       var pieceTaken = square.piece ? true : false;
+
+      this.board.undoStack.push({
+        type: 'promotion',
+        fromRow: fromSquare.row,
+        fromCol: fromSquare.col,
+        toRow: square.row,
+        toCol: square.col,
+        pawn: this,
+        capturedPiece: square.piece || null,
+        pieceFirstMove: this.firstMove || false,
+        halfMoveClock: this.board.halfMoveClock,
+        enPassantTarget: savedEnPassant,
+        gameState: this.board.gameState,
+        gameOver: this.board.gameOver,
+        drawReason: this.board.drawReason,
+      });
 
       fromSquare.piece = null;
       square.piece = this;
@@ -138,6 +155,23 @@ class Pawn extends Piece {
     var dir = this.color === this.board.playerColor ? 1 : -1;
     var capturedRow = dir > 0 ? square.row + 1 : square.row - 1;
     var capturedSquare = this.board.squares[capturedRow][square.col];
+
+    this.board.undoStack.push({
+      type: 'enpassant',
+      fromRow: fromSquare.row,
+      fromCol: fromSquare.col,
+      toRow: square.row,
+      toCol: square.col,
+      epCapturedRow: capturedRow,
+      epCapturedCol: square.col,
+      epCapturedPiece: capturedSquare.piece,
+      pieceFirstMove: this.firstMove || false,
+      halfMoveClock: this.board.halfMoveClock,
+      enPassantTarget: this.board.enPassantTarget,
+      gameState: this.board.gameState,
+      gameOver: this.board.gameOver,
+      drawReason: this.board.drawReason,
+    });
 
     fromSquare.piece = null;
     square.piece = this;

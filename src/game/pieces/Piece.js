@@ -106,6 +106,7 @@ class Piece {
       return;
     }
 
+    var savedEnPassant = this.board.enPassantTarget;
     this.board.enPassantTarget = null;
 
     if (!this.board.isMoveLegal(this, square)) {
@@ -118,6 +119,21 @@ class Piece {
     if (square.piece) {
       pieceTaken = true;
     }
+
+    this.board.undoStack.push({
+      type: pieceTaken ? 'capture' : 'normal',
+      fromRow: fromSquare.row,
+      fromCol: fromSquare.col,
+      toRow: square.row,
+      toCol: square.col,
+      capturedPiece: square.piece || null,
+      pieceFirstMove: this.firstMove || false,
+      halfMoveClock: this.board.halfMoveClock,
+      enPassantTarget: savedEnPassant,
+      gameState: this.board.gameState,
+      gameOver: this.board.gameOver,
+      drawReason: this.board.drawReason,
+    });
 
     fromSquare.piece = null;
     square.piece = this;

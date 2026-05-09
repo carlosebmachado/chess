@@ -101,6 +101,25 @@ class King extends Piece {
     var rookDestSquare = this.board.squares[row][rookDestCol];
     var rook = rookStartSquare.piece;
 
+    this.board.undoStack.push({
+      type: 'castling',
+      fromRow: fromSquare.row,
+      fromCol: fromSquare.col,
+      toRow: square.row,
+      toCol: square.col,
+      rookFromRow: rookStartSquare.row,
+      rookFromCol: rookStartSquare.col,
+      rookToRow: rookDestSquare.row,
+      rookToCol: rookDestSquare.col,
+      kingFirstMove: this.firstMove || false,
+      rookFirstMove: rook.firstMove || false,
+      halfMoveClock: this.board.halfMoveClock,
+      enPassantTarget: this.board.enPassantTarget,
+      gameState: this.board.gameState,
+      gameOver: this.board.gameOver,
+      drawReason: this.board.drawReason,
+    });
+
     fromSquare.piece = null;
     square.piece = this;
     this.currentSquare = square;
