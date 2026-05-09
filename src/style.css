@@ -16,6 +16,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  padding: 5vh 0;
 }
 
 #container {
@@ -25,7 +26,6 @@ body {
   overflow: hidden;
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
   margin: auto;
-  height: 90vh;
 }
 
 canvas {

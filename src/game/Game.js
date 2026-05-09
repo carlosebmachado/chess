@@ -72,9 +72,10 @@ class Game {
 
   resize() {
     if (!this.wrapper) return;
-    var availW = this.wrapper.clientWidth;
-    var availH = this.wrapper.clientHeight;
-    if (availW === 0 || availH === 0) return;
+    var style = getComputedStyle(this.wrapper);
+    var availW = this.wrapper.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+    var availH = this.wrapper.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom);
+    if (availW <= 0 || availH <= 0) return;
 
     var sidebarRatio = 230 / 600;
     var boardSize = Math.min(availH, Math.floor(availW / (1 + sidebarRatio)));
