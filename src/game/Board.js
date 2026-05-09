@@ -42,7 +42,6 @@ class Board {
 
   constructor(playerColor, options) {
     this.size = 8;
-    this.totalSize = Math.pow(this.size);
 
     var width = Game.get().g.getWidth();
     var height = Game.get().g.getHeight();
@@ -82,6 +81,9 @@ class Board {
     this.gameState = 'normal';
     this.gameOver = false;
     this.enPassantTarget = null;
+    this.promotionPending = null;
+    this.promotionChoices = [];
+    this.wasPromotionPushing = false;
 
     var opts = options || {};
     var mode = opts.mode || 'bot';
@@ -131,6 +133,11 @@ class Board {
   }
 
   update(delta) {
+    if (this.promotionPending) {
+      this.checkPromotionClick();
+      return;
+    }
+
     if (this.bot) this.bot.update(delta);
 
     this.initUnderAttackSquares();
@@ -169,6 +176,7 @@ class Board {
   render(g) {
     this.renderBoard(g);
     this.renderPieces(g);
+    this.renderPromotionUI(g);
   }
 
   renderBoard(g) {
@@ -469,6 +477,108 @@ class Board {
       this.gameState = 'check';
     } else {
       this.gameState = 'normal';
+    }
+  }
+
+  checkPromotionClick() {
+    var game = Game.get();
+    if (game.isPushing && !this.wasPromotionPushing) {
+      var x = game.pushPosX;
+      var y = game.pushPosY;
+
+      for (let i = 0; i < this.promotionChoices.length; i++) {
+        var opt = this.promotionChoices[i];
+        if (x >= opt.x && x <= opt.x + opt.w && y >= opt.y && y <= opt.y + opt.h) {
+          this.completePromotion(opt.name);
+          break;
+        }
+      }
+    }
+    this.wasPromotionPushing = game.isPushing;
+  }
+
+  completePromotion(choice) {
+    var pending = this.promotionPending;
+    if (!pending) return;
+
+    var square = pending.square;
+    var fromSquare = pending.fromSquare;
+    var pawn = pending.pawn;
+    var pieceTaken = pending.pieceTaken;
+    var color = pending.color;
+
+    var newPiece;
+    switch (choice) {
+      case 'queen': newPiece = new Queen(this, color, this.squareSize, pawn.playable); break;
+      case 'rook': newPiece = new Rook(this, color, this.squareSize, pawn.playable); break;
+      case 'bishop': newPiece = new Bishop(this, color, this.squareSize, pawn.playable); break;
+      case 'knight': newPiece = new Knight(this, color, this.squareSize, pawn.playable); break;
+      default: newPiece = new Queen(this, color, this.squareSize, pawn.playable);
+    }
+    newPiece.firstMove = true;
+
+    square.piece = newPiece;
+    newPiece.currentSquare = square;
+
+    this.moveList.add({
+      piece: { name: 'pawn', color: color },
+      from: { row: fromSquare.row, col: fromSquare.col },
+      to: { row: square.row, col: square.col },
+      take: pieceTaken,
+      promotion: choice
+    });
+
+    this.promotionPending = null;
+    this.promotionChoices = [];
+    this.nextTurn();
+  }
+
+  renderPromotionUI(g) {
+    if (!this.promotionPending) return;
+
+    var boardSize = this.size * this.squareSize;
+    var centerX = boardSize / 2;
+    var centerY = boardSize / 2;
+
+    g.rect(0, 0, boardSize, boardSize, 'rgba(0, 0, 0, 0.6)');
+
+    var dialogW = 340;
+    var dialogH = 130;
+    var dialogX = centerX - dialogW / 2;
+    var dialogY = centerY - dialogH / 2;
+    g.rect(dialogX, dialogY, dialogW, dialogH, '#333');
+
+    g.drawText('Promote pawn:', dialogX + 20, dialogY + 25, '18px monospace', 'white');
+
+    var choices = ['queen', 'rook', 'bishop', 'knight'];
+    var optionSize = 60;
+    var spacing = 10;
+    var totalW = choices.length * optionSize + (choices.length - 1) * spacing;
+    var startX = centerX - totalW / 2;
+    var optY = dialogY + 50;
+
+    var colorPrefix = this.promotionPending.color[0];
+    var symbols = {
+      queen: MoveList.PIECES[colorPrefix].q,
+      rook: MoveList.PIECES[colorPrefix].r,
+      bishop: MoveList.PIECES[colorPrefix].b,
+      knight: MoveList.PIECES[colorPrefix].n
+    };
+
+    this.promotionChoices = [];
+    for (let i = 0; i < choices.length; i++) {
+      var optX = startX + i * (optionSize + spacing);
+      this.promotionChoices.push({
+        name: choices[i],
+        x: optX,
+        y: optY,
+        w: optionSize,
+        h: optionSize
+      });
+
+      g.rect(optX, optY, optionSize, optionSize, '#555');
+      g.rect(optX + 2, optY + 2, optionSize - 4, optionSize - 4, '#777');
+      g.drawText(symbols[choices[i]], optX + optionSize / 2 - 16, optY + optionSize / 2 + 16, '40px serif', 'white');
     }
   }
 

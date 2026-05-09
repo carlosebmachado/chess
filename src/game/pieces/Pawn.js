@@ -96,6 +96,43 @@ class Pawn extends Piece {
     var fromCol = this.currentSquare.col;
     var isDoubleMove = Math.abs(square.row - fromRow) === 2 && square.col === fromCol;
 
+    var dir;
+    if (this.board.isTwoPlayer) {
+      dir = this.color === Piece.WHITE ? 1 : -1;
+    } else {
+      dir = this.playable ? 1 : -1;
+    }
+    var isPromotion = (dir > 0 && square.row === Board.L8) || (dir < 0 && square.row === Board.L1);
+
+    if (isPromotion) {
+      this.board.enPassantTarget = null;
+      if (!this.board.isMoveLegal(this, square)) return;
+
+      var fromSquare = this.currentSquare;
+      var pieceTaken = square.piece ? true : false;
+
+      fromSquare.piece = null;
+      square.piece = this;
+      this.currentSquare = square;
+
+      this.firstMove = true;
+      this.executeMoveEvents();
+
+      if (!this.playable) {
+        this.board.completePromotion('queen');
+        return;
+      }
+
+      this.board.promotionPending = {
+        pawn: this,
+        square: square,
+        fromSquare: fromSquare,
+        pieceTaken: pieceTaken,
+        color: this.color
+      };
+      return;
+    }
+
     super.move(square);
 
     if (isDoubleMove) {

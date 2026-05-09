@@ -63,7 +63,9 @@ class MoveList {
       var piece = MoveList.PIECES[move.piece.color[0]][move.piece.name[0]];
       var to = Board.RNAME[move.to.row] + Board.CNAME[move.to.col];
 
-      var moveText = `${piece}${move.take ? 'x' : ''}${to}${move.take ? '' : ' '}`;
+      var promo = move.promotion ? `=${move.promotion[0].toUpperCase()}` : '';
+      var moveText = `${piece}${move.take ? 'x' : ''}${to}${promo}`;
+      if (!move.take) moveText += ' ';
       if (i % 2 === 0) {
         str += `${lineCount.toString().padStart(spaceCount, ' ')}. ${moveText}   `;
         lineCount++;
