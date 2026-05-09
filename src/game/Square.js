@@ -34,6 +34,10 @@ class Square {
       }
     }
 
+    if (this === this.board.hoveredSquare) {
+      g.strokeRect(this.x + 2, this.y + 2, this.size - 4, this.size - 4, 'rgba(0, 0, 0, 0.35)', 3);
+    }
+
     if (this.highlight) {
       g.circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 5, 'rgba(0, 0, 0, 0.25)');
     }

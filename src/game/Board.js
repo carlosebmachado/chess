@@ -71,6 +71,7 @@ class Board {
     this.initUnderAttackSquares();
 
     this.pieceAttackSquares = [];
+    this.hoveredSquare = null;
 
     this.moveList = new MoveList();
 
@@ -181,6 +182,33 @@ class Board {
 
     this.checkGameState();
 
+    this.updateHoveredSquare();
+
+  }
+
+  updateHoveredSquare() {
+    if (this.gameOver || !this.isHoldingAny) {
+      this.hoveredSquare = null;
+      return;
+    }
+
+    var game = Game.get();
+    var mx = game.mousePosX;
+    var my = game.mousePosY;
+
+    if (mx === 0 && my === 0) {
+      this.hoveredSquare = null;
+      return;
+    }
+
+    var col = Math.floor(mx / this.squareSize);
+    var row = Math.floor(my / this.squareSize);
+
+    if (this.inBoardLimit(row, col)) {
+      this.hoveredSquare = this.squares[row][col];
+    } else {
+      this.hoveredSquare = null;
+    }
   }
 
   render(g) {

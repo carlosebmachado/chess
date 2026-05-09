@@ -16,6 +16,12 @@ class Graphics {
     this.ctx.fillRect(x, y, width, height);
   }
 
+  strokeRect(x, y, width, height, strokeStyle, lineWidth) {
+    this.ctx.strokeStyle = strokeStyle;
+    this.ctx.lineWidth = lineWidth || 3;
+    this.ctx.strokeRect(x, y, width, height);
+  }
+
   circle(x, y, radius, fillStyle) {
     this.ctx.fillStyle = fillStyle;
     this.ctx.beginPath();
