@@ -101,6 +101,9 @@ class Pawn extends Piece {
 
       var fromSquare = this.currentSquare;
       var pieceTaken = square.piece ? true : false;
+      if (pieceTaken) {
+        this.board[this.color === Piece.WHITE ? 'whiteEatedPieces' : 'blackEatedPieces'].push(square.piece);
+      }
 
       this.board.undoStack.push({
         type: 'promotion',
@@ -177,7 +180,10 @@ class Pawn extends Piece {
     square.piece = this;
     this.currentSquare = square;
 
+    var epCaptured = capturedSquare.piece;
     capturedSquare.piece = null;
+
+    this.board[this.color === Piece.WHITE ? 'whiteEatedPieces' : 'blackEatedPieces'].push(epCaptured);
 
     this.firstMove = true;
     this.board.enPassantTarget = null;

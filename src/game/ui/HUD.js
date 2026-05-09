@@ -7,6 +7,8 @@ class HUD {
     this.bottomPanel = document.getElementById('bottom-panel');
     this.moveListEl = document.getElementById('move-list');
     this.gameStateEl = document.getElementById('game-state');
+    this.topCaptured = document.getElementById('top-captured');
+    this.bottomCaptured = document.getElementById('bottom-captured');
   }
 
   update(delta) {
@@ -60,6 +62,18 @@ class HUD {
     } else {
       this.gameStateEl.textContent = '';
     }
+
+    this.topCaptured.textContent = this.formatCaptured(this.board.blackEatedPieces);
+    this.bottomCaptured.textContent = this.formatCaptured(this.board.whiteEatedPieces);
+  }
+
+  formatCaptured(pieces) {
+    var symbols = '';
+    for (let i = 0; i < pieces.length; i++) {
+      var p = pieces[i];
+      symbols += MoveList.PIECES[p.color[0]][p.name[0]];
+    }
+    return symbols;
   }
 
   formatMove(move) {

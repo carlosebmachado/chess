@@ -131,6 +131,7 @@ class Piece {
 
     if (square.piece) {
       pieceTaken = true;
+      this.board[this.color === Piece.WHITE ? 'whiteEatedPieces' : 'blackEatedPieces'].push(square.piece);
     }
 
     this.board.undoStack.push({

@@ -795,6 +795,15 @@ class Board {
       }
     }
 
+    if (state.capturedPiece) {
+      var eater = state.capturedPiece.color === Piece.WHITE ? 'blackEatedPieces' : 'whiteEatedPieces';
+      this[eater].pop();
+    }
+    if (state.type === 'enpassant' && state.epCapturedPiece) {
+      var epEater = state.epCapturedPiece.color === Piece.WHITE ? 'blackEatedPieces' : 'whiteEatedPieces';
+      this[epEater].pop();
+    }
+
     this.turn = this.turn === Piece.WHITE ? Piece.BLACK : Piece.WHITE;
     return true;
   }

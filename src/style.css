@@ -157,6 +157,14 @@ canvas {
   color: #c0c0c0;
 }
 
+.captured-pieces {
+  font-size: 16px;
+  min-height: 20px;
+  padding: 2px 14px;
+  letter-spacing: 2px;
+  line-height: 1.4;
+}
+
 #game-state {
   text-align: center;
   padding: 8px;

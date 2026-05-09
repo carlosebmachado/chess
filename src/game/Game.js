@@ -91,6 +91,8 @@ class Game {
     var sidebar = document.getElementById('sidebar');
     if (sidebar) {
       sidebar.style.width = sidebarWidth + 'px';
+      sidebar.style.maxHeight = boardSize + 'px';
+      sidebar.style.overflow = 'hidden';
     }
 
     if (this.board) {
