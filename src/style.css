@@ -30,6 +30,7 @@ body {
 canvas {
   display: block;
   background: #b58863;
+  max-width: 600px;
 }
 
 #sidebar {

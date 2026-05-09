@@ -47,44 +47,57 @@ class Piece {
   updatePlayer(delta) {
     if (!this.playable || this.color !== this.board.turn) return;
 
-    var isClicking = Game.get().isPushing;
+    var isPushing = Game.get().isPushing;
     var xClick = Game.get().clickPosX;
     var yClick = Game.get().clickPosY;
     var xPos = Game.get().pushPosX;
     var yPos = Game.get().pushPosY;
 
-    if (isClicking &&
-      !this.board.isHoldingAny &&
-      xClick >= this.x && xClick <= this.x + this.squareSize &&
-      yClick >= this.y && yClick <= this.y + this.squareSize) {
+    var mouseOnThis = xClick >= this.x && xClick <= this.x + this.squareSize &&
+                      yClick >= this.y && yClick <= this.y + this.squareSize;
+
+    var fromCol = Math.floor(xClick / this.squareSize);
+    var fromRow = Math.floor(yClick / this.squareSize);
+    var dropCol = Math.floor(xPos / this.squareSize);
+    var dropRow = Math.floor(yPos / this.squareSize);
+    var sameSquare = fromRow === dropRow && fromCol === dropCol;
+
+    if (isPushing && !this.board.isHoldingAny && mouseOnThis) {
+      if (this.board.selectedPiece !== this) {
+        this.board.justSelected = true;
+      }
+      this.board.selectedPiece = this;
       this.isHolding = true;
       this.board.isHoldingAny = true;
       this.board.currentHolding = this;
       this.setClickPosition(xPos, yPos);
-      // console.log("holding");
     }
 
     if (this.board.currentHolding === this) {
       this.setClickPosition(xPos, yPos);
     }
 
-    if (this.board.currentHolding === this && !isClicking) {
+    if (this.board.currentHolding === this && !isPushing) {
       this.isHolding = false;
       this.board.isHoldingAny = false;
       this.board.currentHolding = null;
-      // console.log("not holding");
 
+      if (sameSquare) return;
+
+      var moved = false;
       for (let i = 0; i < this.possibleMoves.length; i++) {
         var square = this.possibleMoves[i];
         if (square && xPos >= square.x && xPos <= square.x + this.squareSize &&
           yPos >= square.y && yPos <= square.y + this.squareSize) {
-
           this.move(square);
-
+          moved = true;
           break;
         }
       }
 
+      if (!moved) {
+        this.board.selectedPiece = this;
+      }
     }
 
     if (this.isHolding) {

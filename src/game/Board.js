@@ -93,6 +93,8 @@ class Board {
     this.undoStack = [];
 
     this.playerColor = playerColor;
+    this.selectedPiece = null;
+    this.justSelected = false;
 
     var opts = options || {};
     var mode = opts.mode || 'bot';
@@ -153,7 +155,6 @@ class Board {
     
     this.clearHighlight();
 
-    // console.log("board update");
     for (let i = 0; i < this.squares.length; i++) {
       for (let j = 0; j < this.squares[i].length; j++) {
         var square = this.squares[i][j];
@@ -178,12 +179,55 @@ class Board {
       king.calcMoves();
     }
 
+    if (this.selectedPiece && !this.isHoldingAny) {
+      this.selectedPiece.setHighlight(true);
+    }
+
     if (this.bot) this.bot.update(delta);
 
     this.checkGameState();
 
+    this.handleClicks();
+
     this.updateHoveredSquare();
 
+  }
+
+  handleClicks() {
+    var game = Game.get();
+
+    if (game.clickPending && !this.isHoldingAny) {
+      var fromCol = Math.floor(game.clickPending.x / this.squareSize);
+      var fromRow = Math.floor(game.clickPending.y / this.squareSize);
+      var toCol = Math.floor(game.clickPending.releaseX / this.squareSize);
+      var toRow = Math.floor(game.clickPending.releaseY / this.squareSize);
+
+      if (fromRow === toRow && fromCol === toCol) {
+        this.processClick(game.clickPending.x, game.clickPending.y);
+      }
+
+      game.clickPending = null;
+    }
+  }
+
+  processClick(mx, my) {
+    var col = Math.floor(mx / this.squareSize);
+    var row = Math.floor(my / this.squareSize);
+
+    if (!this.inBoardLimit(row, col)) return;
+
+    var clickedSquare = this.squares[row][col];
+
+    if (this.selectedPiece) {
+      if (this.selectedPiece.possibleMoves.includes(clickedSquare) && this.isMoveLegal(this.selectedPiece, clickedSquare)) {
+        this.selectedPiece.move(clickedSquare);
+        this.selectedPiece = null;
+      } else if (!this.justSelected) {
+        this.selectedPiece = null;
+      }
+    }
+
+    this.justSelected = false;
   }
 
   updateHoveredSquare() {
@@ -280,6 +324,7 @@ class Board {
   }
 
   nextTurn() {
+    this.selectedPiece = null;
     this.turn = this.turn === Piece.WHITE ? Piece.BLACK : Piece.WHITE;
     this.recordPosition();
   }

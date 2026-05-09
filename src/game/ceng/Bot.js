@@ -4,7 +4,7 @@ class Bot {
     this.color = color;
   }
 
-  update(delta) {
+  async update(delta) {
     if (this.board.turn !== this.color) return;
 
     if (this.board.gameOver) return;
@@ -36,6 +36,7 @@ class Bot {
         }
       }
     }
+
   }
 
   move(square, piece) {

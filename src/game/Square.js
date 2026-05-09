@@ -34,6 +34,10 @@ class Square {
       }
     }
 
+    if (this.piece && this.board.selectedPiece === this.piece) {
+      g.rect(this.x, this.y, this.size, this.size, 'rgba(100, 180, 255, 0.3)');
+    }
+
     if (this === this.board.hoveredSquare) {
       g.strokeRect(this.x + 2, this.y + 2, this.size - 4, this.size - 4, 'rgba(0, 0, 0, 0.35)', 3);
     }

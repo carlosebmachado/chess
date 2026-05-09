@@ -58,6 +58,7 @@ class Game {
     this.pushPosX = 0;
     this.pushPosY = 0;
     this.isPushing = false;
+    this.clickPending = null;
 
     this.running = true;
     this.loadObjects();
@@ -90,11 +91,17 @@ class Game {
   }
 
   handleTouchStart = (e) => {
+    var rect = this.canvas.getBoundingClientRect();
+    var ox = e.touches[0].clientX - rect.left;
+    var oy = e.touches[0].clientY - rect.top;
+
+    this.clickPosX = ox;
+    this.clickPosY = oy;
     this.touchPosX = e.touches[0].clientX;
     this.touchPosY = e.touches[0].clientY;
 
-    this.pushPosX = this.touchPosX;
-    this.pushPosY = this.touchPosY;
+    this.pushPosX = ox;
+    this.pushPosY = oy;
 
     this.isTouching = true;
     this.isPushing = true;
@@ -106,15 +113,28 @@ class Game {
     this.isTouching = false
     this.isPushing = false;
 
+    if (!this.clickPending) {
+      this.clickPending = {
+        x: this.clickPosX,
+        y: this.clickPosY,
+        releaseX: this.pushPosX,
+        releaseY: this.pushPosY
+      };
+    }
+
     e.preventDefault();
   }
 
   handleTouchMove = (e) => {
+    var rect = this.canvas.getBoundingClientRect();
+    var ox = e.touches[0].clientX - rect.left;
+    var oy = e.touches[0].clientY - rect.top;
+
     this.touchPosX = e.touches[0].clientX;
     this.touchPosY = e.touches[0].clientY;
 
-    this.pushPosX = this.touchPosX;
-    this.pushPosY = this.touchPosY;
+    this.pushPosX = ox;
+    this.pushPosY = oy;
 
     e.preventDefault();
   }
@@ -135,6 +155,15 @@ class Game {
   handleMouseUp = (e) => {
     this.isClicking = false;
     this.isPushing = false;
+
+    if (!this.clickPending) {
+      this.clickPending = {
+        x: this.clickPosX,
+        y: this.clickPosY,
+        releaseX: this.pushPosX,
+        releaseY: this.pushPosY
+      };
+    }
 
     e.preventDefault();
   }

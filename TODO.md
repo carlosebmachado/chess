@@ -11,7 +11,7 @@
   - [X] Adds numbers to left squares and letter to botton squares.
   - [X] Implement undo move.
   - [X] Add last move highlight, highlighting the from/to squares with a complete square overlay in a light transtarent color
-  - [ ] Add current square hover highlight, a border circulating the square
-  - [ ] Beyoud drag and release piece movement, also adds the possibility of click in the piece to move, piece which will become highlighted and show the possible movements and also let to click at the possible square to move there
+  - [X] Add current square hover highlight, a border circulating the square
+  - [X] Beyoud drag and release piece movement, also adds the possibility of click in the piece to move, piece which will become highlighted and show the possible movements and also let to click at the possible square to move there
   - [ ] Adds the possibility to highlight/unhisglight the square by clicking at it with right mouse button
   - [ ] Make the board be redimensionable

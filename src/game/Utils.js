@@ -13,3 +13,12 @@ class Utils {
     return arr;
   }
 }
+
+function die(ms){
+    var now = new Date().getTime();
+    while(new Date().getTime() < now + ms);
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
