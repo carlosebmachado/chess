@@ -41,6 +41,9 @@ canvas {
   flex-direction: column;
   padding: 14px;
   gap: 10px;
+  -webkit-user-select: none;
+  user-select: none;
+  cursor: default;
 }
 
 .player-panel {

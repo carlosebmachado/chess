@@ -25,6 +25,8 @@ class HUD {
     this.bottomPanel.classList.toggle('active', turnIsWhite);
 
     var moves = this.board.moveList;
+    var wasAtBottom = this.moveListEl.scrollTop + this.moveListEl.clientHeight >= this.moveListEl.scrollHeight - 1;
+
     var html = '';
     var lineCount = 1;
     for (let i = 0; i < moves.length; i += 2) {
@@ -39,7 +41,9 @@ class HUD {
       lineCount++;
     }
     this.moveListEl.innerHTML = html;
-    this.moveListEl.scrollTop = this.moveListEl.scrollHeight;
+    if (wasAtBottom) {
+      this.moveListEl.scrollTop = this.moveListEl.scrollHeight;
+    }
 
     if (this.board.gameState === 'check') {
       this.gameStateEl.textContent = 'Check!';
