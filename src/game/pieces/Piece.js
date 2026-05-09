@@ -157,6 +157,8 @@ class Piece {
 
     this.executeMoveEvents();
 
+    this.board.lastMove = { from: fromSquare, to: square };
+
     if (this.name === 'pawn' || pieceTaken) {
       this.board.halfMoveClock = 0;
     } else {

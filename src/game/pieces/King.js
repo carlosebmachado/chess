@@ -139,6 +139,8 @@ class King extends Piece {
       take: false
     });
 
+    this.board.lastMove = { from: fromSquare, to: square };
+
     this.board.halfMoveClock++;
     this.board.nextTurn();
   }

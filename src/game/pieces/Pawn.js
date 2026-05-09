@@ -189,6 +189,8 @@ class Pawn extends Piece {
       take: true
     });
 
+    this.board.lastMove = { from: fromSquare, to: square };
+
     this.board.halfMoveClock = 0;
     this.board.nextTurn();
   }

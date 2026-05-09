@@ -26,6 +26,14 @@ class Square {
   render(g) {
     g.rect(this.x, this.y, this.size, this.size, this.color);
 
+    if (this.board.lastMove) {
+      var lastFrom = this.board.lastMove.from;
+      var lastTo = this.board.lastMove.to;
+      if (this === lastFrom || this === lastTo) {
+        g.rect(this.x, this.y, this.size, this.size, 'rgba(255, 255, 0, 0.3)');
+      }
+    }
+
     if (this.highlight) {
       g.circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 5, 'rgba(0, 0, 0, 0.25)');
     }

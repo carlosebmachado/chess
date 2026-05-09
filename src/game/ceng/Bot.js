@@ -9,6 +9,8 @@ class Bot {
 
     if (this.board.gameOver) return;
 
+    this.board.recomputeAttacks();
+
     var botPieces = [];
 
     for (let i = 0; i < this.board.squares.length; ++i) {
@@ -29,6 +31,7 @@ class Bot {
       for (let mi = 0; mi < piece.possibleMoves.length; ++mi) {
         if (this.board.isMoveLegal(piece, piece.possibleMoves[mi])) {
           this.move(piece.possibleMoves[mi], piece);
+          this.board.recomputeAttacks();
           return;
         }
       }

@@ -81,6 +81,7 @@ class Board {
     this.gameState = 'normal';
     this.gameOver = false;
     this.enPassantTarget = null;
+    this.lastMove = null;
     this.promotionPending = null;
     this.promotionChoices = [];
     this.wasPromotionPushing = false;
@@ -147,8 +148,6 @@ class Board {
       return;
     }
 
-    if (this.bot) this.bot.update(delta);
-
     this.initUnderAttackSquares();
     
     this.clearHighlight();
@@ -177,6 +176,8 @@ class Board {
       king.possibleMoves = [];
       king.calcMoves();
     }
+
+    if (this.bot) this.bot.update(delta);
 
     this.checkGameState();
 
@@ -344,6 +345,10 @@ class Board {
   }
 
   isMoveLegal(piece, targetSquare) {
+    if (targetSquare.piece && targetSquare.piece.color === piece.color) {
+      return false;
+    }
+
     if (piece.name === 'pawn' && this.enPassantTarget === targetSquare) {
       return this.isEnPassantLegal(piece, targetSquare);
     }
@@ -753,6 +758,8 @@ class Board {
       take: pieceTaken,
       promotion: choice
     });
+
+    this.lastMove = { from: fromSquare, to: square };
 
     this.halfMoveClock = 0;
     this.promotionPending = null;
