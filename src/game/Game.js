@@ -70,7 +70,7 @@ class Game {
   }
 
   loadObjects() {
-    if (Game.debug) this.testAnimation = new TestAnimation();
+    this.testAnimation = new TestAnimation();
     var playerColor = this.options.playerColor === 'black' ? Piece.BLACK : Piece.WHITE;
     this.board = new Board(playerColor, this.options);
     this.hud = new HUD(this.board);
