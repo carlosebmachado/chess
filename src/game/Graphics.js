@@ -1,14 +1,6 @@
 class Graphics {
   constructor(ctx) {
     this.ctx = ctx;
-
-    // this.setWidth(window.innerWidth);
-    // this.setHeight(window.innerHeight);
-
-    // window.addEventListener('resize', () => {
-    //   this.setWidth(window.innerWidth);
-    //   this.setHeight(window.innerHeight);
-    // });
   }
 
   rect(x, y, width, height, fillStyle) {

@@ -242,10 +242,8 @@ class Piece {
       for (let j = 0; j < this.board.squares[i].length; j++) {
         var square = this.board.squares[i][j];
         var piece = square.piece;
-        // console.log("piece: ", piece);
         if (piece === this) {
           this.currentSquare = square;
-          // console.log("current square: ", this.currentSquare);
         }
       }
     }

@@ -197,13 +197,16 @@ class Board {
       this.selectedPiece.setHighlight(true);
     }
 
-    if (this.bot) this.bot.update(delta);
+    if (this.bot) {
+      this.bot.update(delta);
+    }
 
     this.checkGameState();
 
     this.handleClicks();
 
     this.updateHoveredSquare();
+    this.updateCursor();
 
   }
 
@@ -269,6 +272,28 @@ class Board {
     }
   }
 
+  updateCursor() {
+    var game = Game.get();
+    var mx = game.mousePosX;
+    var my = game.mousePosY;
+    var col = Math.floor(mx / this.squareSize);
+    var row = Math.floor(my / this.squareSize);
+
+    if (this.isHoldingAny) {
+      game.canvas.style.cursor = 'grabbing';
+      return;
+    }
+
+    if (this.inBoardLimit(row, col) && !this.gameOver) {
+      var piece = this.squares[row][col].piece;
+      if (piece && piece.color === this.turn && piece.playable) {
+        game.canvas.style.cursor = 'grab';
+        return;
+      }
+    }
+    game.canvas.style.cursor = 'default';
+  }
+
   render(g) {
     this.renderBoard(g);
     this.renderLabels(g);
@@ -283,7 +308,6 @@ class Board {
         var square = this.squares[i][j];
         if (this.currentHolding && this.currentHolding.currentSquare === square) continue;
         square.render(g);
-        // console.log(square);
       }
     }
 
