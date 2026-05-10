@@ -122,6 +122,9 @@ class Game {
   }
 
   loadEvents() {
+    if (this.eventsLoaded) return;
+    this.eventsLoaded = true;
+
     this.canvas.addEventListener("mousedown", this.handleMouseDown);
     this.canvas.addEventListener("contextmenu", this.handleContextMenu);
     this.canvas.addEventListener("mouseup", this.handleMouseUp);
@@ -133,6 +136,18 @@ class Game {
 
     window.addEventListener('keydown', this.handleKeyDown, false);
     window.addEventListener('keyup', this.handleKeyUp, false);
+  }
+
+  backToMenu() {
+    this.stop();
+    var canvas = document.getElementById('game-canvas');
+    var sidebar = document.getElementById('sidebar');
+    var menuOverlay = document.getElementById('menu-overlay');
+    var confirmOverlay = document.getElementById('confirm-overlay');
+    canvas.style.display = 'none';
+    sidebar.style.display = 'none';
+    menuOverlay.style.display = 'flex';
+    confirmOverlay.style.display = 'none';
   }
 
   handleTouchStart = (e) => {
@@ -258,6 +273,17 @@ class Game {
   }
 
   handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      var confirmOverlay = document.getElementById('confirm-overlay');
+      var menuOverlay = document.getElementById('menu-overlay');
+      if (confirmOverlay.style.display === 'flex') {
+        confirmOverlay.style.display = 'none';
+      } else if (menuOverlay.style.display !== 'flex') {
+        confirmOverlay.style.display = 'flex';
+      }
+      e.preventDefault();
+      return;
+    }
     if (e.key === 'd' || e.key === 'D') {
       Game.debug = !Game.debug;
     }

@@ -63,6 +63,11 @@ class HUD {
       this.gameStateEl.textContent = '';
     }
 
+    var backBtn = document.getElementById('back-to-menu-btn');
+    if (backBtn) {
+      backBtn.style.display = this.board.gameOver ? 'block' : 'none';
+    }
+
     this.topCaptured.textContent = this.formatCaptured(this.board.blackEatedPieces);
     this.bottomCaptured.textContent = this.formatCaptured(this.board.whiteEatedPieces);
   }

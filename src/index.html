@@ -29,6 +29,16 @@
         <span id="bottom-label">White</span>
       </div>
       <div id="bottom-captured" class="captured-pieces"></div>
+      <button id="back-to-menu-btn">Back to Menu</button>
+    </div>
+    <div id="confirm-overlay">
+      <div id="confirm-box">
+        <p>Return to main menu?</p>
+        <div class="confirm-buttons">
+          <button id="confirm-yes">Yes</button>
+          <button id="confirm-no">No</button>
+        </div>
+      </div>
     </div>
   </div>
   <div id="menu-overlay">
@@ -91,6 +101,18 @@
         playerColor: colorSelect.value
       });
       game.run();
+    });
+
+    document.getElementById('confirm-yes').addEventListener('click', function() {
+      Game.get().backToMenu();
+    });
+
+    document.getElementById('confirm-no').addEventListener('click', function() {
+      document.getElementById('confirm-overlay').style.display = 'none';
+    });
+
+    document.getElementById('back-to-menu-btn').addEventListener('click', function() {
+      Game.get().backToMenu();
     });
   </script>
 </body>
