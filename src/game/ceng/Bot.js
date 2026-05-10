@@ -9,6 +9,11 @@ class Bot {
 
     if (this.board.gameOver) return;
 
+    if (this.board.isBotAttack) return;
+    this.board.isBotAttack = true;
+
+    await sleep(randInt(800, 1200));
+
     this.board.recomputeAttacks();
 
     var botPieces = [];
@@ -32,10 +37,13 @@ class Bot {
         if (this.board.isMoveLegal(piece, piece.possibleMoves[mi])) {
           this.move(piece.possibleMoves[mi], piece);
           this.board.recomputeAttacks();
+          this.board.isBotAttack = false;
           return;
         }
       }
     }
+
+    this.board.isBotAttack = false;
 
   }
 

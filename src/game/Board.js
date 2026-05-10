@@ -104,6 +104,7 @@ class Board {
 
     this.recordPosition();
 
+    this.isBotAttack = false;
     if (this.isTwoPlayer) {
       for (let i = 0; i < this.squares.length; i++) {
         for (let j = 0; j < this.squares[i].length; j++) {
@@ -347,11 +348,6 @@ class Board {
   initPieces(color) {
     var player = color;
     var opponent = color === Piece.WHITE ? Piece.BLACK : Piece.WHITE;
-
-
-    // this.squares[3][3].piece = new Knight(this, player, this.squareSize, true);
-    // this.squares[6][3].piece = new Pawn(this, player, this.squareSize, true);
-    // this.squares[3][3].piece = new King(this, player, this.squareSize, true);
 
     this.squares[7][0].piece = new Rook(this, player, this.squareSize, true);
     this.squares[7][1].piece = new Knight(this, player, this.squareSize, true);

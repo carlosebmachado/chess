@@ -14,4 +14,6 @@
   - [X] Add current square hover highlight, a border circulating the square
   - [X] Beyoud drag and release piece movement, also adds the possibility of click in the piece to move, piece which will become highlighted and show the possible movements and also let to click at the possible square to move there
   - [X] Adds the possibility to highlight/unhighlight the square by clicking at it with right mouse button
-  - [ ] Make the board be redimensionable
+  - [X] Make the board be resizable
+  - [ ] Adds arrow
+  - [ ] Change the piece to capture highlight to a circle
