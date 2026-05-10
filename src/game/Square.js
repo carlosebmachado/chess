@@ -13,6 +13,7 @@ class Square {
     this.board = board;
     this.highlight = false;
     this.marked = false;
+    this.strokeFactor = 0.06;
   }
 
   update(delta) {
@@ -40,11 +41,15 @@ class Square {
     }
 
     if (this === this.board.hoveredSquare) {
-      g.strokeRect(this.x + 2, this.y + 2, this.size - 4, this.size - 4, 'rgba(0, 0, 0, 0.35)', 3);
+      g.strokeRect(this.x + 2, this.y + 2, this.size - 4, this.size - 4, 'rgba(0, 0, 0, 0.35)', this.size * this.strokeFactor);
     }
 
     if (this.highlight) {
-      g.circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 5, 'rgba(0, 0, 0, 0.25)');
+      if (this.piece) {
+        g.strokeCircle(this.x + this.size / 2, this.y + this.size / 2, this.size / 2.5, 'rgba(0, 0, 0, 0.45)', this.size * this.strokeFactor);
+      } else {
+        g.circle(this.x + this.size / 2, this.y + this.size / 2, this.size / 5, 'rgba(0, 0, 0, 0.25)');
+      }
     }
 
     if (this.marked) {

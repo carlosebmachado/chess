@@ -60,6 +60,12 @@ class Game {
     this.isPushing = false;
     this.clickPending = null;
 
+    this.isRightDown = false;
+    this.rightClickStartX = 0;
+    this.rightClickStartY = 0;
+    this.rightClickStartRow = 0;
+    this.rightClickStartCol = 0;
+
     this.running = true;
     this.loadObjects();
     this.loadEvents();
@@ -180,14 +186,18 @@ class Game {
 
   handleContextMenu = (e) => {
     e.preventDefault();
-    var col = Math.floor(e.offsetX / this.board.squareSize);
-    var row = Math.floor(e.offsetY / this.board.squareSize);
-    if (this.board.inBoardLimit(row, col)) {
-      this.board.squares[row][col].marked = !this.board.squares[row][col].marked;
-    }
   }
 
   handleMouseDown = (e) => {
+    if (e.button === 2) {
+      this.rightClickStartX = e.offsetX;
+      this.rightClickStartY = e.offsetY;
+      this.rightClickStartRow = Math.floor(e.offsetY / this.board.squareSize);
+      this.rightClickStartCol = Math.floor(e.offsetX / this.board.squareSize);
+      this.isRightDown = true;
+      e.preventDefault();
+      return;
+    }
     if (e.button !== 0) return;
     this.isClicking = true;
     this.isPushing = true;
@@ -202,6 +212,26 @@ class Game {
   }
 
   handleMouseUp = (e) => {
+    if (e.button === 2) {
+      if (this.isRightDown && this.board) {
+        var endCol = Math.floor(e.offsetX / this.board.squareSize);
+        var endRow = Math.floor(e.offsetY / this.board.squareSize);
+        if (this.board.inBoardLimit(this.rightClickStartRow, this.rightClickStartCol) &&
+            this.board.inBoardLimit(endRow, endCol)) {
+          var from = this.board.squares[this.rightClickStartRow][this.rightClickStartCol];
+          var to = this.board.squares[endRow][endCol];
+          if (from === to) {
+            from.marked = !from.marked;
+          } else {
+            this.board.toggleArrow(from, to);
+          }
+        }
+      }
+      this.isRightDown = false;
+      e.preventDefault();
+      return;
+    }
+
     this.isClicking = false;
     this.isPushing = false;
 

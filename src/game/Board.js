@@ -92,6 +92,8 @@ class Board {
     this.drawReason = null;
     this.undoStack = [];
 
+    this.arrows = [];
+
     this.playerColor = playerColor;
     this.selectedPiece = null;
     this.justSelected = false;
@@ -144,6 +146,17 @@ class Board {
         square.highlight = false;
       }
     }
+  }
+
+  toggleArrow(from, to) {
+    for (var i = 0; i < this.arrows.length; i++) {
+      var arrow = this.arrows[i];
+      if (arrow.from === from && arrow.to === to) {
+        this.arrows.splice(i, 1);
+        return;
+      }
+    }
+    this.arrows.push({from: from, to: to});
   }
 
   update(delta) {
@@ -260,6 +273,7 @@ class Board {
     this.renderBoard(g);
     this.renderLabels(g);
     this.renderPieces(g);
+    this.renderArrows(g);
     this.renderPromotionUI(g);
   }
 
@@ -317,6 +331,17 @@ class Board {
 
     if (this.currentHolding) {
       this.currentHolding.render(g);
+    }
+  }
+
+  renderArrows(g) {
+    for (var i = 0; i < this.arrows.length; i++) {
+      var arrow = this.arrows[i];
+      var fromX = arrow.from.x + this.squareSize / 2;
+      var fromY = arrow.from.y + this.squareSize / 2;
+      var toX = arrow.to.x + this.squareSize / 2;
+      var toY = arrow.to.y + this.squareSize / 2;
+      g.drawArrow(fromX, fromY, toX, toY, 'rgba(50, 120, 230, 0.6)', 4);
     }
   }
 
