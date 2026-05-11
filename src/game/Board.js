@@ -91,6 +91,8 @@ class Board {
     this.positionHistory = [];
     this.drawReason = null;
     this.undoStack = [];
+    this.redoStack = [];
+    this.isNavigatingHistory = false;
 
     this.arrows = [];
 
@@ -197,7 +199,7 @@ class Board {
       this.selectedPiece.setHighlight(true);
     }
 
-    if (this.bot) {
+    if (this.bot && !this.isNavigatingHistory) {
       this.bot.update(delta);
     }
 
@@ -392,6 +394,8 @@ class Board {
     this.selectedPiece = null;
     this.turn = this.turn === Piece.WHITE ? Piece.BLACK : Piece.WHITE;
     this.recordPosition();
+    this.clearRedoStack();
+    this.isNavigatingHistory = false;
   }
 
   initPieces(color) {
@@ -768,9 +772,81 @@ class Board {
     }
   }
 
+  saveRedoState() {
+    var pieces = [];
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        pieces.push(this.squares[i][j].piece);
+      }
+    }
+
+    this.redoStack.push({
+      squarePieces: pieces,
+      turn: this.turn,
+      enPassantTarget: this.enPassantTarget,
+      gameState: this.gameState,
+      gameOver: this.gameOver,
+      drawReason: this.drawReason,
+      halfMoveClock: this.halfMoveClock,
+      lastMove: this.lastMove,
+      whiteEated: [...this.whiteEatedPieces],
+      blackEated: [...this.blackEatedPieces],
+      moveListEntry: this.moveList.moves.length > 0 ? this.moveList.moves[this.moveList.moves.length - 1] : null,
+      positionHistoryEntry: this.positionHistory.length > 0 ? this.positionHistory[this.positionHistory.length - 1] : null,
+      undoStackEntry: this.undoStack.length > 0 ? this.undoStack[this.undoStack.length - 1] : null,
+    });
+  }
+
+  redoNextMove() {
+    if (this.redoStack.length === 0) return false;
+    if (this.promotionPending) return false;
+
+    var redo = this.redoStack.pop();
+
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        var piece = redo.squarePieces[i * 8 + j];
+        this.squares[i][j].piece = piece;
+        if (piece) {
+          piece.currentSquare = this.squares[i][j];
+        }
+      }
+    }
+
+    this.turn = redo.turn;
+    this.enPassantTarget = redo.enPassantTarget;
+    this.gameState = redo.gameState;
+    this.gameOver = redo.gameOver;
+    this.drawReason = redo.drawReason;
+    this.halfMoveClock = redo.halfMoveClock;
+    this.lastMove = redo.lastMove;
+    this.whiteEatedPieces = redo.whiteEated;
+    this.blackEatedPieces = redo.blackEated;
+    this.selectedPiece = null;
+
+    if (redo.moveListEntry) {
+      this.moveList.moves.push(redo.moveListEntry);
+    }
+    if (redo.positionHistoryEntry) {
+      this.positionHistory.push(redo.positionHistoryEntry);
+    }
+    if (redo.undoStackEntry) {
+      this.undoStack.push(redo.undoStackEntry);
+    }
+
+    this.isNavigatingHistory = this.undoStack.length > 0;
+    return true;
+  }
+
+  clearRedoStack() {
+    this.redoStack = [];
+  }
+
   undoLastMove() {
     if (this.undoStack.length === 0) return false;
     if (this.promotionPending) return false;
+
+    this.saveRedoState();
 
     var state = this.undoStack.pop();
 
@@ -850,6 +926,8 @@ class Board {
     }
 
     this.turn = this.turn === Piece.WHITE ? Piece.BLACK : Piece.WHITE;
+    this.selectedPiece = null;
+    this.isNavigatingHistory = this.undoStack.length > 0;
     return true;
   }
 

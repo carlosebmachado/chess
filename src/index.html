@@ -24,6 +24,10 @@
         <div id="move-list"></div>
       </div>
       <div id="game-state"></div>
+      <div id="nav-buttons">
+        <button id="prev-move-btn">&#9664;</button>
+        <button id="next-move-btn">&#9654;</button>
+      </div>
       <div id="bottom-panel" class="player-panel">
         <span class="player-dot"></span>
         <span id="bottom-label">White</span>
@@ -113,6 +117,14 @@
 
     document.getElementById('back-to-menu-btn').addEventListener('click', function() {
       Game.get().backToMenu();
+    });
+
+    document.getElementById('prev-move-btn').addEventListener('click', function() {
+      Game.get().board.undoLastMove();
+    });
+
+    document.getElementById('next-move-btn').addEventListener('click', function() {
+      Game.get().board.redoNextMove();
     });
   </script>
 </body>

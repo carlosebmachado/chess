@@ -284,6 +284,16 @@ class Game {
       e.preventDefault();
       return;
     }
+    if (e.key === 'ArrowLeft') {
+      if (this.board) this.board.undoLastMove();
+      e.preventDefault();
+      return;
+    }
+    if (e.key === 'ArrowRight') {
+      if (this.board) this.board.redoNextMove();
+      e.preventDefault();
+      return;
+    }
     if (e.key === 'd' || e.key === 'D') {
       Game.debug = !Game.debug;
     }

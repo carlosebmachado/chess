@@ -179,6 +179,43 @@ canvas {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
+#nav-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+#nav-buttons button {
+  flex: 1;
+  font-size: 16px;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #d0d0d0;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, transform 0.1s;
+}
+
+#nav-buttons button:hover {
+  background: rgba(74, 111, 165, 0.3);
+}
+
+#nav-buttons button:active {
+  transform: scale(0.95);
+  background: rgba(74, 111, 165, 0.5);
+}
+
+#nav-buttons button:disabled {
+  opacity: 0.3;
+  cursor: default;
+  transform: none;
+}
+
+#nav-buttons button:disabled:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
 #menu-overlay {
   position: absolute;
   top: 0;

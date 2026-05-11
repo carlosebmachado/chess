@@ -1,5 +1,6 @@
 # TODO
 
+## Game
 - [X] Implement pawn promotion
 - [X] Fix: Board.totalSize is NaN – Math.pow(this.size) on line 45 needs a second arg (Math.pow(8, 2) or just 8*8). Harmless since it's unused, but worth cleaning up.
 - [X] Fix: MoveList notation is reversed – MoveList.toString() at line 64 prints RNME[row] + CNAME[col] producing "4e" instead of "e4".
@@ -15,5 +16,12 @@
   - [X] Beyoud drag and release piece movement, also adds the possibility of click in the piece to move, piece which will become highlighted and show the possible movements and also let to click at the possible square to move there
   - [X] Adds the possibility to highlight/unhighlight the square by clicking at it with right mouse button
   - [X] Make the board be resizable
-  - [ ] Adds arrow
-  - [ ] Change the piece to capture highlight to a circle
+  - [X] Adds arrow
+  - [X] Change the piece to capture highlight to a circle
+
+
+## Engine
+
+Now we will implement a chess engine "boilerplate". We will implement a class to intermediate the engine call, inside this class we will change where we will call, Bot, CEngV0, Stockfish etc., but the game just will know this class, what it calls just this class will know.
+- The CEngV0 class will implements the UCI — Universal Chess Interface and it's working will be based on current Bot random working.
+  - It will implement

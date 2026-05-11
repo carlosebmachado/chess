@@ -68,6 +68,15 @@ class HUD {
       backBtn.style.display = this.board.gameOver ? 'block' : 'none';
     }
 
+    var prevBtn = document.getElementById('prev-move-btn');
+    var nextBtn = document.getElementById('next-move-btn');
+    if (prevBtn) {
+      prevBtn.disabled = this.board.undoStack.length === 0;
+    }
+    if (nextBtn) {
+      nextBtn.disabled = this.board.redoStack.length === 0;
+    }
+
     this.topCaptured.textContent = this.formatCaptured(this.board.blackEatedPieces);
     this.bottomCaptured.textContent = this.formatCaptured(this.board.whiteEatedPieces);
   }
