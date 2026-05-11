@@ -147,6 +147,7 @@ class Piece {
       gameState: this.board.gameState,
       gameOver: this.board.gameOver,
       drawReason: this.board.drawReason,
+      lastMove: this.board.lastMove,
     });
 
     fromSquare.piece = null;

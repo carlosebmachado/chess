@@ -859,6 +859,7 @@ class Board {
     this.gameState = state.gameState;
     this.gameOver = state.gameOver;
     this.drawReason = state.drawReason;
+    this.lastMove = state.lastMove || null;
 
     if (this.positionHistory.length > 0) {
       this.positionHistory.pop();
