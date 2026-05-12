@@ -1,13 +1,21 @@
 class Engine {
-  constructor(board, color, engineType) {
+  constructor(board, color, engineType, engineLevel) {
     this.board = board;
     this.color = color;
     this.pendingBestMove = null;
+    this.engineType = engineType || 'ceng';
 
-    if (engineType === 'stockfish') {
-      this.engineType = 'stockfish';
+    if (this.engineType === 'stockfish') {
+      this.engine = null;
+    } else if (this.engineType === 'geneng') {
+      this.engine = new GenEng();
+      this.engine.setOutputCallback(this.onEngineOutput.bind(this));
+      this.engine.handleUCI('uci');
+      if (engineLevel) {
+        this.engine.handleUCI('setoption name Level value ' + engineLevel);
+      }
+      this.engine.handleUCI('isready');
     } else {
-      this.engineType = 'ceng';
       this.engine = new CEngV0();
       this.engine.setOutputCallback(this.onEngineOutput.bind(this));
       this.engine.handleUCI('uci');
@@ -62,14 +70,12 @@ class Engine {
     if (this.board.isBotAttack) return;
     this.board.isBotAttack = true;
 
-    await sleep(randInt(800, 1200));
+    await sleep(randInt(400, 800));
 
     this.board.recomputeAttacks();
 
     var posCmd = this.buildPositionCommand();
-    if (this.engineType === 'ceng') {
-      this.engine.handleUCI(posCmd);
-    }
+    this.engine.handleUCI(posCmd);
 
     var maxAttempts = 200;
     var movePlayed = false;
@@ -78,10 +84,7 @@ class Engine {
       if (this.board.gameOver) break;
 
       this.pendingBestMove = null;
-
-      if (this.engineType === 'ceng') {
-        this.engine.handleUCI('go');
-      }
+      this.engine.handleUCI('go');
 
       while (this.pendingBestMove === null) {
         await sleep(10);

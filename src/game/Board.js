@@ -118,7 +118,7 @@ class Board {
       }
       this.engine = null;
     } else {
-      this.engine = new Engine(this, playerColor === Piece.WHITE ? Piece.BLACK : Piece.WHITE);
+      this.engine = new Engine(this, playerColor === Piece.WHITE ? Piece.BLACK : Piece.WHITE, opts.engineType, opts.engineLevel);
     }
   }
 
