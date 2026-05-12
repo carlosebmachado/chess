@@ -396,6 +396,16 @@ class Board {
     this.recordPosition();
     this.clearRedoStack();
     this.isNavigatingHistory = false;
+    this.clearMarksAndArrows();
+  }
+
+  clearMarksAndArrows() {
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 8; j++) {
+        this.squares[i][j].marked = false;
+      }
+    }
+    this.arrows = [];
   }
 
   initPieces(color) {
