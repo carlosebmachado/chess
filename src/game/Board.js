@@ -116,9 +116,9 @@ class Board {
           if (p) p.playable = true;
         }
       }
-      this.bot = null;
+      this.engine = null;
     } else {
-      this.bot = new Bot(this, playerColor === Piece.WHITE ? Piece.BLACK : Piece.WHITE);
+      this.engine = new Engine(this, playerColor === Piece.WHITE ? Piece.BLACK : Piece.WHITE);
     }
   }
 
@@ -199,8 +199,8 @@ class Board {
       this.selectedPiece.setHighlight(true);
     }
 
-    if (this.bot && !this.isNavigatingHistory) {
-      this.bot.update(delta);
+    if (this.engine && !this.isNavigatingHistory) {
+      this.engine.update(delta);
     }
 
     this.checkGameState();

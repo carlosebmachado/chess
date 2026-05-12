@@ -15,7 +15,7 @@ class HUD {
     var turnIsWhite = this.board.turn === Piece.WHITE;
     var playerIsWhite = this.board.playerColor === Piece.WHITE;
 
-    if (this.board.bot) {
+    if (this.board.engine) {
       this.topLabel.textContent = 'Bot';
       this.bottomLabel.textContent = playerIsWhite ? 'White' : 'Black';
     } else {

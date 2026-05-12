@@ -300,7 +300,7 @@ class Game {
     if (e.key === 'z' || e.key === 'Z') {
       if (this.board) {
         this.board.undoLastMove();
-        if (this.board.bot && this.board.turn !== this.board.playerColor) {
+        if (this.board.engine && this.board.turn !== this.board.playerColor) {
           this.board.undoLastMove();
         }
       }
