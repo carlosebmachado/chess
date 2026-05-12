@@ -363,11 +363,22 @@ class Board {
   renderArrows(g) {
     for (var i = 0; i < this.arrows.length; i++) {
       var arrow = this.arrows[i];
-      var fromX = arrow.from.x + this.squareSize / 2;
-      var fromY = arrow.from.y + this.squareSize / 2;
+      var cx = arrow.from.x + this.squareSize / 2;
+      var cy = arrow.from.y + this.squareSize / 2;
       var toX = arrow.to.x + this.squareSize / 2;
       var toY = arrow.to.y + this.squareSize / 2;
-      g.drawArrow(fromX, fromY, toX, toY, 'rgba(50, 120, 230, 0.6)', 4);
+      var dx = toX - cx;
+      var dy = toY - cy;
+      var dist = Math.sqrt(dx * dx + dy * dy);
+      var fromX, fromY;
+      if (dist > 0) {
+        fromX = cx + (dx / dist) * (this.squareSize / 4);
+        fromY = cy + (dy / dist) * (this.squareSize / 4);
+      } else {
+        fromX = cx;
+        fromY = cy;
+      }
+      g.drawArrow(fromX, fromY, toX, toY, 'rgba(50, 120, 230, 0.6)', 14);
     }
   }
 
