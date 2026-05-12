@@ -314,6 +314,4 @@ class CEngV0 {
     return { row: row, col: col };
   }
 
-  render(g) {
-  }
 }
