@@ -130,11 +130,19 @@ class GenEng {
   }
 
   saveState() {
+    var wkr = -1, wkc = -1, bkr = -1, bkc = -1;
+    for (var i = 0; i < 64; i++) {
+      var p = this.board[i];
+      if (p === GenEng.W_KING) { wkr = i >> 3; wkc = i & 7; }
+      if (p === GenEng.B_KING) { bkr = i >> 3; bkc = i & 7; }
+    }
     return {
       board: new Uint8Array(this.board),
       sideToMove: this.sideToMove,
       castling: this.castling,
-      epSquare: this.epSquare ? { row: this.epSquare.row, col: this.epSquare.col } : null
+      epSquare: this.epSquare ? { row: this.epSquare.row, col: this.epSquare.col } : null,
+      wKingRow: wkr, wKingCol: wkc,
+      bKingRow: bkr, bKingCol: bkc
     };
   }
 
@@ -420,16 +428,11 @@ class GenEng {
     return true;
   }
 
-  isInCheck(board, side) {
-    for (var r = 0; r < 8; r++) {
-      for (var c = 0; c < 8; c++) {
-        var p = board[r * 8 + c];
-        if (p && this.getPieceType(p) === 'k' && this.isWhite(p) === (side === 'w')) {
-          return this.isSquareAttacked(board, r, c, side === 'w' ? 'b' : 'w');
-        }
-      }
-    }
-    return false;
+  isInCheck(state, side) {
+    var kr = side === 'w' ? state.wKingRow : state.bKingRow;
+    var kc = side === 'w' ? state.wKingCol : state.bKingCol;
+    if (kr < 0 || kc < 0) return false;
+    return this.isSquareAttacked(state.board, kr, kc, side === 'w' ? 'b' : 'w');
   }
 
   copyState(state) {
@@ -437,7 +440,9 @@ class GenEng {
       board: new Uint8Array(state.board),
       sideToMove: state.sideToMove,
       castling: state.castling,
-      epSquare: state.epSquare ? { row: state.epSquare.row, col: state.epSquare.col } : null
+      epSquare: state.epSquare ? { row: state.epSquare.row, col: state.epSquare.col } : null,
+      wKingRow: state.wKingRow, wKingCol: state.wKingCol,
+      bKingRow: state.bKingRow, bKingCol: state.bKingCol
     };
   }
 
@@ -460,6 +465,11 @@ class GenEng {
     }
 
     if (pieceType === 'k') {
+      if (piece <= 6) {
+        newState.wKingRow = to.row; newState.wKingCol = to.col;
+      } else {
+        newState.bKingRow = to.row; newState.bKingCol = to.col;
+      }
       var colDiff = to.col - from.col;
       if (colDiff === 2) {
         newState.board[to.row * 8 + 5] = newState.board[to.row * 8 + 7];
@@ -637,7 +647,11 @@ class GenEng {
       if (m.isCapture) {
         m.sortKey = 10000 + m.score;
       } else {
-        m.sortKey = 0;
+        var uci = m.uci;
+        var toCol = GenEng.FILES.indexOf(uci[2]);
+        var toRow = GenEng.RANKS.indexOf(uci[3]);
+        var centerDist = Math.abs(toRow - 3.5) + Math.abs(toCol - 3.5);
+        m.sortKey = Math.round(Math.max(0, 6 - centerDist) * 10);
       }
     }
     moves.sort(function(a, b) { return b.sortKey - a.sortKey; });
@@ -747,7 +761,7 @@ class GenEng {
     var bestMove = null;
 
     for (var depth = 1; depth <= maxDepth; depth++) {
-      if (this.stopRequested || Date.now() - startTime > timeLimit * 0.8) break;
+      if (this.nodeCount > 2000000 || this.stopRequested || Date.now() - startTime > timeLimit * 0.8) break;
 
       var state = this.copyState(initialState);
       var moves = this.genMovesFromState(state);
@@ -763,6 +777,7 @@ class GenEng {
         if (this.stopRequested || Date.now() - startTime > timeLimit * 0.9) break;
 
         var child = this.applyMove(state, moves[i].uci);
+        if (this.isInCheck(child, state.sideToMove)) continue;
         var score = -this.search(child, depth - 1, -beta, -alpha, startTime, timeLimit);
 
         if (score > bestScore) {
@@ -782,8 +797,9 @@ class GenEng {
   }
 
   search(state, depth, alpha, beta, startTime, timeLimit) {
+    if (this.nodeCount > 2000000 || this.stopRequested) return 0;
     this.nodeCount++;
-    if ((this.nodeCount & 4095) === 0 && Date.now() - startTime > timeLimit) {
+    if ((this.nodeCount & 255) === 0 && Date.now() - startTime > timeLimit) {
       this.stopRequested = true;
       return 0;
     }
@@ -791,7 +807,7 @@ class GenEng {
 
     if (depth === 0) return this.quiesce(state, alpha, beta, startTime, timeLimit);
 
-    var inCheck = this.isInCheck(state.board, state.sideToMove);
+    var inCheck = this.isInCheck(state, state.sideToMove);
 
     if (inCheck) {
       depth++;
@@ -812,7 +828,7 @@ class GenEng {
 
       var child = this.applyMove(state, moves[i].uci);
 
-      if (this.isInCheck(child.board, state.sideToMove)) {
+      if (this.isInCheck(child, state.sideToMove)) {
         continue;
       }
 
@@ -833,7 +849,7 @@ class GenEng {
 
   quiesce(state, alpha, beta, startTime, timeLimit) {
     this.nodeCount++;
-    if ((this.nodeCount & 8191) === 0 && Date.now() - startTime > timeLimit) {
+    if ((this.nodeCount & 1023) === 0 && Date.now() - startTime > timeLimit) {
       this.stopRequested = true;
       return 0;
     }
@@ -858,7 +874,7 @@ class GenEng {
 
       var child = this.applyMove(state, captures[i].uci);
 
-      if (this.isInCheck(child.board, state.sideToMove)) continue;
+      if (this.isInCheck(child, state.sideToMove)) continue;
 
       var score = -this.quiesce(child, -beta, -alpha, startTime, timeLimit);
 
