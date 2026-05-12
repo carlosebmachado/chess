@@ -1,4 +1,4 @@
-importScripts('/src/game/ceng/GenEng.js');
+importScripts('/src/game/engines/GenEng.js');
 
 var engine = new GenEng();
 

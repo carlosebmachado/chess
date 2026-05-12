@@ -1,0 +1,8 @@
+{
+  "name": "chess",
+  "private": true,
+  "scripts": {
+    "serve": "npx http-server src -p 8082 -c-1",
+    "stockfish": "node src/game/engines/stockfish-server.js"
+  }
+}

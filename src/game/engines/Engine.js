@@ -6,9 +6,12 @@ class Engine {
     this.engineType = engineType || 'ceng';
 
     if (this.engineType === 'stockfish') {
-      this.engine = null;
+      this.engine = new StockfishEngine(engineLevel);
+      this.engine.setOutputCallback(this.onEngineOutput.bind(this));
+      this.sendToEngine('uci');
+      this.sendToEngine('isready');
     } else if (this.engineType === 'geneng') {
-      this.worker = new Worker('/src/game/ceng/GenEng-worker.js');
+      this.worker = new Worker('/src/game/engines/GenEng-worker.js');
       this.worker.onmessage = function(e) {
         this.onEngineOutput(e.data);
       }.bind(this);
@@ -25,17 +28,20 @@ class Engine {
     }
   }
 
-  sendToEngine(cmd) {
+  async sendToEngine(cmd) {
     if (this.worker) {
       this.worker.postMessage(cmd);
     } else if (this.engine) {
-      this.engine.handleUCI(cmd);
+      var result = this.engine.handleUCI(cmd);
+      if (result && typeof result.then === 'function') {
+        await result;
+      }
     }
   }
 
   onEngineOutput(msg) {
     if (msg.startsWith('bestmove ')) {
-      this.pendingBestMove = msg.substring(9).trim();
+      this.pendingBestMove = msg.substring(9).trim().split(/\s+/)[0];
     }
   }
 
@@ -85,7 +91,7 @@ class Engine {
     this.board.recomputeAttacks();
 
     var posCmd = this.buildPositionCommand();
-    this.sendToEngine(posCmd);
+    await this.sendToEngine(posCmd);
 
     var maxAttempts = 200;
     var movePlayed = false;
@@ -94,7 +100,7 @@ class Engine {
       if (this.board.gameOver) break;
 
       this.pendingBestMove = null;
-      this.sendToEngine(this.worker ? 'go movetime 2000' : 'go');
+      this.sendToEngine(this.worker || this.engineType === 'stockfish' ? 'go movetime 2000' : 'go');
 
       while (this.pendingBestMove === null) {
         await sleep(10);
