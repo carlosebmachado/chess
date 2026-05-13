@@ -1,4 +1,6 @@
-class MoveList {
+import Board from './Board.js';
+
+export default class MoveList {
   static PIECES = {
     w: {
       p: '♙',

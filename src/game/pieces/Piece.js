@@ -1,4 +1,7 @@
-class Piece {
+import Game from '../Game.js';
+import Board from '../Board.js';
+
+export default class Piece {
   static WHITE = "white";
   static BLACK = "black";
 
@@ -6,7 +9,7 @@ class Piece {
     this.board = board;
 
     this.texture = new Image();
-    this.texture.src = `/src/game/assets/${color}-${name}.png`;
+    this.texture.src = new URL(`../assets/${color}-${name}.png`, import.meta.url).href;
 
     this.x = 0;
     this.y = 0;

@@ -1,4 +1,10 @@
-class Engine {
+import Board from '../Board.js';
+import CEngV0 from './CEngV0.js';
+import GenEng from './GenEng.js';
+import StockfishEngine from './StockfishEngine.js';
+import { sleep, randInt } from '../Utils.js';
+
+export default class Engine {
   constructor(board, color, engineType, engineLevel) {
     this.board = board;
     this.color = color;
@@ -11,7 +17,7 @@ class Engine {
       this.sendToEngine('uci');
       this.sendToEngine('isready');
     } else if (this.engineType === 'geneng') {
-      this.worker = new Worker('/src/game/engines/GenEng-worker.js');
+      this.worker = new Worker(new URL('./GenEng-worker.js', import.meta.url), { type: 'module' });
       this.worker.onmessage = function(e) {
         this.onEngineOutput(e.data);
       }.bind(this);

@@ -1,4 +1,7 @@
-class Square {
+import Game from './Game.js';
+import Board from './Board.js';
+
+export default class Square {
   static LIGHT = '#f0d9b5';
   static DARK = '#b58863';
 

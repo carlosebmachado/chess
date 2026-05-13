@@ -1,4 +1,4 @@
-class StockfishEngine {
+export default class StockfishEngine {
   constructor(engineLevel) {
     this.serverUrl = 'http://localhost:3001/uci';
     this.outputCallback = null;

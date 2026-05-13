@@ -1,4 +1,6 @@
-class Knight extends Piece {
+import Piece from './Piece.js';
+
+export default class Knight extends Piece {
   constructor(board, color, squareSize, playable) {
     super(board, color, 'knight', squareSize, playable);
     this.firstMove = false;

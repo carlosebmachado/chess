@@ -1,4 +1,4 @@
-class GenEng {
+export default class GenEng {
   static EMPTY = 0;
   static W_PAWN = 1;  static W_KNIGHT = 2;  static W_BISHOP = 3;
   static W_ROOK = 4;   static W_QUEEN = 5;   static W_KING = 6;

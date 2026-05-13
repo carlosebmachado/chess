@@ -1,4 +1,7 @@
-class Pawn extends Piece {
+import Piece from './Piece.js';
+import Board from '../Board.js';
+
+export default class Pawn extends Piece {
   constructor(board, color, squareSize, playable) {
     super(board, color, 'pawn', squareSize, playable);
     this.firstMove = false;

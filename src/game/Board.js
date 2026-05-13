@@ -1,4 +1,16 @@
-class Board {
+import Game from './Game.js';
+import Square from './Square.js';
+import Piece from './pieces/Piece.js';
+import Rook from './pieces/Rook.js';
+import Knight from './pieces/Knight.js';
+import Bishop from './pieces/Bishop.js';
+import Queen from './pieces/Queen.js';
+import King from './pieces/King.js';
+import Pawn from './pieces/Pawn.js';
+import MoveList from './MoveList.js';
+import Engine from './engines/Engine.js';
+
+export default class Board {
   static L8 = 0;
   static L7 = 1;
   static L6 = 2;

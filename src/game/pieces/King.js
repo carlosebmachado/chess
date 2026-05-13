@@ -1,4 +1,7 @@
-class King extends Piece {
+import Piece from './Piece.js';
+import Board from '../Board.js';
+
+export default class King extends Piece {
   constructor(board, color, squareSize, playable) {
     super(board, color, 'king', squareSize, playable);
     this.firstMove = false;

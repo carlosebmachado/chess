@@ -1,4 +1,6 @@
-class Rook extends Piece {
+import Piece from './Piece.js';
+
+export default class Rook extends Piece {
   constructor(board, color, squareSize, playable) {
     super(board, color, 'rook', squareSize, playable);
     this.firstMove = false;

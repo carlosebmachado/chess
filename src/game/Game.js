@@ -1,4 +1,10 @@
-class Game {
+import Graphics from './Graphics.js';
+import Piece from './pieces/Piece.js';
+import Board from './Board.js';
+import HUD from './ui/HUD.js';
+import TestAnimation from './ui/TestAnimation.js';
+
+export default class Game {
   static debug = false;
   static VERTICAL_ORIENTATION = 'vertical';
   static HORIZONTAL_ORIENTATION = 'horizontal';
@@ -140,14 +146,8 @@ class Game {
 
   backToMenu() {
     this.stop();
-    var canvas = document.getElementById('game-canvas');
-    var sidebar = document.getElementById('sidebar');
-    var menuOverlay = document.getElementById('menu-overlay');
-    var confirmOverlay = document.getElementById('confirm-overlay');
-    canvas.style.display = 'none';
-    sidebar.style.display = 'none';
-    menuOverlay.style.display = 'flex';
-    confirmOverlay.style.display = 'none';
+    Game.instance = null;
+    if (Game.onBackToMenu) Game.onBackToMenu();
   }
 
   handleTouchStart = (e) => {
@@ -274,13 +274,7 @@ class Game {
 
   handleKeyDown = (e) => {
     if (e.key === 'Escape') {
-      var confirmOverlay = document.getElementById('confirm-overlay');
-      var menuOverlay = document.getElementById('menu-overlay');
-      if (confirmOverlay.style.display === 'flex') {
-        confirmOverlay.style.display = 'none';
-      } else if (menuOverlay.style.display !== 'flex') {
-        confirmOverlay.style.display = 'flex';
-      }
+      if (Game.onToggleConfirm) Game.onToggleConfirm();
       e.preventDefault();
       return;
     }

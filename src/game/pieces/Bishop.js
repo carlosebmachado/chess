@@ -1,4 +1,6 @@
-class Bishop extends Piece {
+import Piece from './Piece.js';
+
+export default class Bishop extends Piece {
   constructor(board, color, squareSize, playable) {
     super(board, color, 'bishop', squareSize, playable);
     this.firstMove = false;

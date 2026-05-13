@@ -1,4 +1,6 @@
-class TestAnimation {
+import Game from '../Game.js';
+
+export default class TestAnimation {
   constructor() {
     this.x = 0;
     this.y = 0;

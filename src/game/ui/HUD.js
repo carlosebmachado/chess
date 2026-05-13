@@ -1,4 +1,8 @@
-class HUD {
+import Piece from '../pieces/Piece.js';
+import Board from '../Board.js';
+import MoveList from '../MoveList.js';
+
+export default class HUD {
   constructor(board) {
     this.board = board;
     this.topLabel = document.getElementById('top-label');

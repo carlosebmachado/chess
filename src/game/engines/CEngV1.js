@@ -1,4 +1,4 @@
-class CEngV0 {
+export default class CEngV0 {
   constructor() {
     this.squares = [];
     this.sideToMove = 'w';

@@ -1,4 +1,6 @@
-class Queen extends Piece {
+import Piece from './Piece.js';
+
+export default class Queen extends Piece {
   constructor(board, color, squareSize, playable) {
     super(board, color, 'queen', squareSize, playable);
     this.firstMove = false;
