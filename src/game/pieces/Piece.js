@@ -1,5 +1,4 @@
 import Game from '../Game.js';
-import Board from '../Board.js';
 
 export default class Piece {
   static WHITE = "white";
